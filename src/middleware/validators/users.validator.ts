@@ -66,7 +66,7 @@ const userFieldValidationRules = (
       })
       .withMessage('User name must be between 1 and 75 characters'),
     body('phone')
-      .optional({ values: 'null' })
+      .optional()
       .isString()
       .withMessage('Phone must be a string')
       .trim()

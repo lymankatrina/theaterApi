@@ -53,11 +53,11 @@ export const checkUserExists = async (
         lastName,
         userName,
         email,
-        role: 'customer',
-        phone: 
-          authUser.phone_number || undefined
+        role: 'customer'
       };
-      
+      if (authUser.phone_number) {
+        newUser.phone = authUser.phone_number;
+      }
       await collections.users.insertOne(
         newUser
       );
@@ -72,10 +72,8 @@ export const checkUserExists = async (
       next();
       return;
     }
-    console.error(
-      'Failed to check or add user:', 
-      error
-    );
+    console.dir(error, {
+      depth: null});
 
     res.status(500).json({
       message: 
