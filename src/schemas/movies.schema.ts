@@ -1,6 +1,6 @@
 import * as mongoDB from 'mongodb';
 import type { Db } from 'mongodb';
-import { MOVIE_CERTIFICATIONS } from '../types/movieCertifications';
+import { MOVIE_CERTIFICATIONS } from '../types/movies.types';
 import { COLLECTION_NAMES } from '../config/collectionNames';
 
 export async function applySchemaValidation(

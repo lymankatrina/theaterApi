@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { matchedData } from 'express-validator';
 
-import type { Movie } from '../models/movies';
+import type { Movie } from '../models/movies.model';
 import type { 
   CreateMovieInput, 
   UpdateMovieInput 

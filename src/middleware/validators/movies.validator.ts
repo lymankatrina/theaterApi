@@ -5,7 +5,7 @@ import {
 
 import {
   MOVIE_CERTIFICATIONS
-} from '../../types/movieCertifications';
+} from '../../types/movies.types';
 
 import {
   validDateString

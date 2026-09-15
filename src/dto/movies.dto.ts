@@ -1,4 +1,4 @@
-import type { MovieCertification } from '../types/movieCertifications';
+import type { MovieCertification } from '../types/movies.types';
 
 export interface CreateMovieInput {
   title: string;

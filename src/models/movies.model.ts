@@ -1,5 +1,5 @@
 import type { ObjectId } from 'mongodb';
-import type { MovieCertification } from '../types/movieCertifications';
+import type { MovieCertification } from '../types/movies.types';
 
 export interface Movie {
   _id?: ObjectId;
