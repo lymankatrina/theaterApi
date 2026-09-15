@@ -1,8 +1,12 @@
 import express from 'express';
 
+import {
+  connectToDatabase
+} from './services/database.services';
+
 const app = express();
 
-const port = process.env.Port || 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -11,8 +15,19 @@ app.get('/', (_req, res) => {
     message: 'San Juan Theater API'
   });
 });
-app.listen(port, () => {
-  console.log(
-    `Server running on port ${port}`
-  );
-});
+
+connectToDatabase()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(
+        `Server running on port ${port}`
+      );
+    });
+  })
+  .catch((error: unknown) => {
+    console.error(
+      'Failed to connect to database:',
+      error
+    );
+    process.exit(1);
+  });

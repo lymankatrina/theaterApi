@@ -6,8 +6,8 @@
       "request": "launch",
       "name": "Debug Theater API",
       "runtimeArgs": [
-        "-r",
-        "ts-node/register"
+        "--import",
+        "tsx"
       ],
       "args": [
         "${workspaceFolder}/src/server.ts"
