@@ -12,9 +12,188 @@
     }
   ],
   "paths": {
+    "/users/all": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get all users",
+        "description": "Returns all users. Administrative access is required.",
+        "responses": {
+          "200": {
+            "description": "Users retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "500": {
+            "description": "Error getting users"
+          }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get current user",
+        "description": "Returns the currently authenticated user.",
+        "responses": {
+          "200": {
+            "description": "User retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "Object",
+                  "required": [
+                    "userName",
+                    "role"
+                  ],
+                  "properties": {
+                    "userName": {
+                      "type": "string",
+                      "example": "John Smith"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "customer",
+                        "employee",
+                        "admin"
+                      ],
+                      "example": "customer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "500": {
+            "description": "Error getting user"
+          }
+        }
+      }
+    },
+    "/users/email/{email}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get user by email",
+        "description": "Returns a user by email. Administrative access is required.",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "description": "Email address of the user",
+            "schema": {
+              "type": "string",
+              "format": "email",
+              "example": "john.smith@example.com"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "422": {
+            "description": "User Email parameter not valid"
+          },
+          "500": {
+            "description": "Error getting user by email"
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get user by ID",
+        "description": "Returns a user by ID. Administrative access is required.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of the user",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "66c8e0d1f0a123456789abcd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "422": {
+            "description": "User ID parameter not valid"
+          },
+          "500": {
+            "description": "Error getting user by ID"
+          }
+        }
+      }
+    },
     "/users/update/{userId}": {
       "put": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Update a user",
         "description": "Updates the profile information for a user. A user may update their own profile, or an administrator may update a user's profile.",
         "parameters": [
@@ -88,7 +267,9 @@
     },
     "/users/role/{userId}": {
       "put": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Update a user's role",
         "description": "Updates a user's role. Administrative access is required.",
         "parameters": [
@@ -107,7 +288,9 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["role"],
+                "required": [
+                  "role"
+                ],
                 "properties": {
                   "role": {
                     "type": "string",
@@ -149,7 +332,9 @@
     },
     "/users/delete/{userId}": {
       "delete": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Delete a user",
         "description": "Deletes a user. Administrative access is required.",
         "parameters": [
@@ -184,9 +369,121 @@
         }
       }
     },
+    "/movies/all": {
+      "get": {
+        "tags": [
+          "Movies"
+        ],
+        "summary": "Get all movies",
+        "description": "Returns all movies sorted alphabetically by title.",
+        "responses": {
+          "200": {
+            "description": "Movies retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Movie"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error getting movies"
+          }
+        }
+      }
+    },
+    "/movies/search/{title}": {
+      "get": {
+        "tags": [
+          "Movies"
+        ],
+        "summary": "Search movies by title",
+        "description": "Returns movies with titles that contain the provided search text. The search is case-insensitive.",
+        "parameters": [
+          {
+            "name": "title",
+            "in": "path",
+            "required": true,
+            "description": "Movie title or partial title to search for",
+            "schema": {
+              "type": "string",
+              "maxLength": 85,
+              "example": "spider"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie search completed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Movie"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Error searching by movie title"
+          }
+        }
+      }
+    },
+    "/movies/{movieId}": {
+      "get": {
+        "tags": [
+          "Movies"
+        ],
+        "summary": "Get movie by ID",
+        "description": "Returns one movie by movie ID.",
+        "parameters": [
+          {
+            "name": "movieId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Movie"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Movie not found"
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Error getting movie by ID"
+          }
+        }
+      }
+    },
     "/movies/new": {
       "post": {
-        "tags": ["Movies"],
+        "tags": [
+          "Movies"
+        ],
         "summary": "Create a new movie",
         "description": "Creates a new movie. Administrative access is require.",
         "requestBody": {
@@ -197,7 +494,7 @@
                 "type": "object",
                 "required": [
                   "title",
-                  "tagline",
+                  "tagLine",
                   "overview",
                   "year",
                   "certification",
@@ -207,7 +504,7 @@
                   "poster",
                   "trailer"
                 ],
-                "properties":{
+                "properties": {
                   "title": {
                     "type": "string",
                     "minLength": 1,
@@ -309,7 +606,9 @@
     },
     "/movies/update/{movieId}": {
       "put": {
-        "tags": ["Movies"],
+        "tags": [
+          "Movies"
+        ],
         "summary": "Update a movie",
         "description": "Updates an existing movie . Administrative access is required.",
         "parameters": [
@@ -331,7 +630,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                    "title": {
+                  "title": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 85,
@@ -435,7 +734,9 @@
     },
     "/movies/delete/{movieId}": {
       "delete": {
-        "tags": ["Movies"],
+        "tags": [
+          "Movies"
+        ],
         "summary": "Delete a movie",
         "description": "Deletes an existing movie. Administrative access is required.",
         "parameters": [
@@ -467,6 +768,154 @@
           },
           "500": {
             "description": "Failed to delete movie"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "required": [
+          "_id",
+          "firstName",
+          "lastName",
+          "userName",
+          "email",
+          "role"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "68d07c4a1234567890abcdef"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Smith"
+          },
+          "userName": {
+            "type": "string",
+            "example": "John Smith"
+          },
+          "phone": {
+            "type": "string",
+            "example": "435-555-1234"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john.smith@example.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "employee",
+              "admin"
+            ],
+            "example": "customer"
+          }
+        }
+      },
+      "Movie": {
+        "type": "object",
+        "required": [
+          "_id",
+          "title",
+          "tagLine",
+          "overview",
+          "year",
+          "certification",
+          "releaseDate",
+          "genres",
+          "runtime",
+          "poster",
+          "trailer"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "68d07c4a1234567890abcdef"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 85,
+            "example": "Coyote vs. Acme"
+          },
+          "tagLine": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 85,
+            "example": "The movie Acme doesn't want you to see."
+          },
+          "overview": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 850,
+            "example": "A tenacious coyote takes on the ACME Corporation."
+          },
+          "year": {
+            "type": "integer",
+            "minimum": 1888,
+            "maximum": 3000,
+            "example": 2026
+          },
+          "certification": {
+            "type": "string",
+            "enum": [
+              "G",
+              "PG",
+              "PG-13",
+              "R",
+              "NC-17"
+            ],
+            "example": "PG"
+          },
+          "releaseDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-08-28"
+          },
+          "genres": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100,
+            "example": "Comedy, Animation"
+          },
+          "runtime": {
+            "type": "string",
+            "example": "1h 43m"
+          },
+          "imdbScore": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 10,
+            "example": 7.5
+          },
+          "rottenTomatoes": {
+            "type": "string",
+            "example": "96%"
+          },
+          "fandangoAudienceScore": {
+            "type": "string",
+            "example": "95%"
+          },
+          "poster": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/poster.jpg"
+          },
+          "trailer": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/trailer"
           }
         }
       }
