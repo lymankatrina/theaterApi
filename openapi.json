@@ -771,6 +771,33 @@
           }
         }
       }
+    },
+    "/seats/all": {
+      "get": {
+        "tags": [
+          "Seats"
+        ],
+        "summary": "Get all seats",
+        "description": "Returns all seats in theater layout order.",
+        "responses": {
+          "200": {
+            "description": "Seats retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Seat"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error retrieving seats"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -916,6 +943,47 @@
             "type": "string",
             "format": "uri",
             "example": "https://example.com/trailer"
+          }
+        }
+      },
+      "Seat": {
+        "type": "object",
+        "required": [
+          "_id",
+          "section",
+          "row",
+          "seat",
+          "isWheelchair"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "66c8e0d1f0a123456789abcd"
+          },
+          "section": {
+            "type": "string",
+            "enum": [
+              "left",
+              "center",
+              "right"
+            ],
+            "example": "center"
+          },
+          "row": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 19,
+            "example": 4
+          },
+          "seat": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8,
+            "example": 8
+          },
+          "isWheelchair": {
+            "type": "boolean",
+            "example": true
           }
         }
       }
