@@ -183,6 +183,293 @@
           }
         }
       }
+    },
+    "/movies/new": {
+      "post": {
+        "tags": ["Movies"],
+        "summary": "Create a new movie",
+        "description": "Creates a new movie. Administrative access is require.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "tagline",
+                  "overview",
+                  "year",
+                  "certification",
+                  "releaseDate",
+                  "genres",
+                  "runtime",
+                  "poster",
+                  "trailer"
+                ],
+                "properties":{
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 85,
+                    "example": "The Shawshank Redemption"
+                  },
+                  "tagLine": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 85,
+                    "example": "Fear can hold you prisoner. Hope can set you free."
+                  },
+                  "overview": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 850,
+                    "example": "Two imprisoned men bond over a number of years."
+                  },
+                  "year": {
+                    "type": "integer",
+                    "minimum": 1888,
+                    "maximum": 3000,
+                    "example": 1994
+                  },
+                  "certification": {
+                    "type": "string",
+                    "enum": [
+                      "G",
+                      "PG",
+                      "PG-13",
+                      "R",
+                      "NC-17"
+                    ],
+                    "example": "R"
+                  },
+                  "releaseDate": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "1994-09-23"
+                  },
+                  "genres": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 100,
+                    "example": "Drama"
+                  },
+                  "runtime": {
+                    "type": "string",
+                    "example": "2h 22m"
+                  },
+                  "imdbScore": {
+                    "type": "number",
+                    "format": "float",
+                    "minimum": 0,
+                    "maximum": 10,
+                    "example": 9.3
+                  },
+                  "rottenTomatoes": {
+                    "type": "string",
+                    "example": "89%"
+                  },
+                  "fandangoAudienceScore": {
+                    "type": "string",
+                    "example": "98%"
+                  },
+                  "poster": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://example.com/poster.jpg"
+                  },
+                  "trailer": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://example.com/trailer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Movie created successfully"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "422": {
+            "description": "Invalid movie data"
+          },
+          "500": {
+            "description": "Unable to create movie"
+          }
+        }
+      }
+    },
+    "/movies/update/{movieId}": {
+      "put": {
+        "tags": ["Movies"],
+        "summary": "Update a movie",
+        "description": "Updates an existing movie . Administrative access is required.",
+        "parameters": [
+          {
+            "name": "movieId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of the movie to update",
+            "schema": {
+              "type": "string",
+              "example": "66c8e0d1f0a123456789abcd"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 85,
+                    "example": "The Shawshank Redemption"
+                  },
+                  "tagLine": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 85,
+                    "example": "Fear can hold you prisoner. Hope can set you free."
+                  },
+                  "overview": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 850,
+                    "example": "Two imprisoned men bond over a number of years."
+                  },
+                  "year": {
+                    "type": "integer",
+                    "minimum": 1888,
+                    "maximum": 3000,
+                    "example": 1994
+                  },
+                  "certification": {
+                    "type": "string",
+                    "enum": [
+                      "G",
+                      "PG",
+                      "PG-13",
+                      "R",
+                      "NC-17"
+                    ],
+                    "example": "R"
+                  },
+                  "releaseDate": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "1994-09-23"
+                  },
+                  "genres": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 100,
+                    "example": "Drama"
+                  },
+                  "runtime": {
+                    "type": "string",
+                    "example": "2h 22m"
+                  },
+                  "imdbScore": {
+                    "type": "number",
+                    "format": "float",
+                    "minimum": 0,
+                    "maximum": 10,
+                    "example": 9.3
+                  },
+                  "rottenTomatoes": {
+                    "type": "string",
+                    "example": "89%"
+                  },
+                  "fandangoAudienceScore": {
+                    "type": "string",
+                    "example": "98%"
+                  },
+                  "poster": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://example.com/poster.jpg"
+                  },
+                  "trailer": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://example.com/trailer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Movie updated successfully"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "404": {
+            "description": "Movie not found"
+          },
+          "422": {
+            "description": "Invalid movie Id or movie data"
+          },
+          "500": {
+            "description": "Unable to update movie"
+          }
+        }
+      }
+    },
+    "/movies/delete/{movieId}": {
+      "delete": {
+        "tags": ["Movies"],
+        "summary": "Delete a movie",
+        "description": "Deletes an existing movie. Administrative access is required.",
+        "parameters": [
+          {
+            "name": "movieId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "66c8e0d1f0a123456789abcd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie deleted successfully"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "404": {
+            "description": "Movie not found"
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Failed to delete movie"
+          }
+        }
+      }
     }
   }
 }

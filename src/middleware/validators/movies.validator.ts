@@ -103,13 +103,19 @@ const movieFieldValidationRules = (
     field('poster')
       .isString()
       .trim()
-      .isURL()
-      .withMessage('Poster must be a URL to a publicly shared image'),
+      .isURL({
+        require_protocol: true,
+        protocols: ['http', 'https']
+      })
+      .withMessage('Poster must be a valid HTTP or HTTPS URL to a publicly shared image'),
     field('trailer')
       .isString()
       .trim()
-      .isURL()
-      .withMessage('Trailer must be a URL to an official trailer')
+      .isURL({
+        require_protocol: true,
+        protocols: ['http', 'https']
+      })
+      .withMessage('Trailer must be a valid HTTP or HTTPS URL to an official trailer')
   ];  
 };
 
