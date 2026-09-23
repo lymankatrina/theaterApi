@@ -485,7 +485,7 @@
           "Movies"
         ],
         "summary": "Create a new movie",
-        "description": "Creates a new movie. Administrative access is require.",
+        "description": "Creates a new movie. Administrative access is required.",
         "requestBody": {
           "required": true,
           "content": {
@@ -798,6 +798,159 @@
           }
         }
       }
+    },
+    "/showtimes/all": {
+      "get": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Get all showtimes",
+        "description": "Returns all showtimes.",
+        "responses": {
+          "200": {
+            "description": "Showtimes retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Showtime"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error getting showtimes"
+          }
+        }
+      }
+    },
+    "/showtimes/showtime/{showtimeId}": {
+      "get": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Get showtime by ID",
+        "description": "Returns one showtime by showtime ID.",
+        "parameters": [
+          {
+            "name": "showtimeId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of the showtime",
+            "schema": {
+              "type": "string",
+              "example": "6ab43f8cc9819c4743d6203c"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Showtime retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Showtime"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Showtime not found"
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Error retrieving showtime by ID"
+          }
+        }
+      }
+    },
+    "/showtimes/search/{movieId}": {
+      "get": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Get showtimes by Movie ID",
+        "description": "Returns all showtimes for the provided movie ID.",
+        "parameters": [
+          {
+            "name": "movieId",
+            "in": "path",
+            "description": "MongoDB ObjectId of the movie",
+            "example": "6ab1ce9c052d507320602a7d",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Showtimes retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Showtime"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Error getting showtimes by ID"
+          }
+        }
+      }
+    },
+    "/showtimes/new": {
+      "post": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Create new showtimes",
+        "description": "Creates new showtimes for each date between the provided start date and end date. Administrative access is required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShowtimeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Showtimes created successfully"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "404": {
+            "description": "Movie not found"
+          },
+          "409": {
+            "description": "One or more showtimes conflict with existing showtimes"
+          },
+          "422": {
+            "description": "Invalid showtime data"
+          },
+          "500": {
+            "description": "Error creating showtimes"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -984,6 +1137,83 @@
           "isWheelchair": {
             "type": "boolean",
             "example": true
+          }
+        }
+      },
+      "Showtime": {
+        "type": "object",
+        "required": [
+          "_id",
+          "movieId",
+          "date",
+          "time",
+          "showtimeType"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "66c8e0d1f0a123456789abce"
+          },
+          "movieId": {
+            "type": "string",
+            "example": "66c8e0d1f0a123456789abcd"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-08-28"
+          },
+          "time": {
+            "type": "string",
+            "example": "7:00 PM"
+          },
+          "showtimeType": {
+            "type": "string",
+            "enum": [
+              "matinee",
+              "premier",
+              "standard"
+            ],
+            "example": "standard"
+          }
+        }
+      },
+      "CreateShowtimeInput": {
+        "type": "object",
+        "required": [
+          "movieId",
+          "startDate",
+          "endDate",
+          "time",
+          "showtimeType"
+        ],
+        "properties": {
+          "movieId": {
+            "type": "string",
+            "example": "66c8e0d1f0a123456789abcd"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-08-28"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-09-03"
+          },
+          "time": {
+            "type": "string",
+            "example": "7:00 PM"
+          },
+          "showtimeType": {
+            "type": "string",
+            "enum": [
+              "matinee",
+              "premier",
+              "standard"
+            ],
+            "example": "standard"
           }
         }
       }

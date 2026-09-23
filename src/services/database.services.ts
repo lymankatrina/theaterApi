@@ -6,10 +6,12 @@ import { COLLECTION_NAMES } from '../config/collectionNames';
 import { applySchemaValidation as applyUserSchemaValidation } from '../schemas/users.schema';
 import { applySchemaValidation as applyMovieSchemaValidation } from '../schemas/movies.schema';
 import { applySchemaValidation as applySeatSchemaValidation } from '../schemas/seats.schema';
+import { applySchemaValidation as applyShowtimeSchemaValidation } from '../schemas/showtimes.schema';
 
 import type { User } from '../models/users.model';
 import type { Movie } from '../models/movies.model';
 import type { Seat } from '../models/seats.model';
+import type { Showtime } from '../models/showtimes.model';
 
 export let mongoClient: mongoDB.MongoClient;
 export let database: mongoDB.Db;
@@ -18,49 +20,36 @@ export const collections = {} as {
   users: mongoDB.Collection<User>;
   movies: mongoDB.Collection<Movie>;
   seats: mongoDB.Collection<Seat>;
+  showtimes: mongoDB.Collection<Showtime>;
 };
 
-export const connectToDatabase = 
-  async (): Promise<void> => {
-    mongoClient = new mongoDB.MongoClient(
-      getEnv('DB_CONN_STRING')
-    );
-    
-    await mongoClient.connect();
-    
-    database = mongoClient.db(
-      getEnv('DB_NAME')
-    );
+export const connectToDatabase = async (): Promise<void> => {
+  mongoClient = new mongoDB.MongoClient(getEnv('DB_CONN_STRING'));
 
-    await applyUserSchemaValidation(database);
-    await applyMovieSchemaValidation(database);
-    await applySeatSchemaValidation(database);
+  await mongoClient.connect();
 
-    collections.users = 
-      database.collection<User>(
-        COLLECTION_NAMES.users
-      );
-    collections.movies = 
-      database.collection<Movie>(
-        COLLECTION_NAMES.movies
-      );
-    collections.seats =
-      database.collection<Seat>(
-        COLLECTION_NAMES.seats
-      );
+  database = mongoClient.db(getEnv('DB_NAME'));
 
-    await collections.seats.createIndex(
-      {
-        section: 1,
-        row: 1,
-        seat: 1
-      },
-      {
-        unique: true
-      }
-    );
+  await applyUserSchemaValidation(database);
+  await applyMovieSchemaValidation(database);
+  await applySeatSchemaValidation(database);
+  await applyShowtimeSchemaValidation(database);
 
-    console.log(
-      `Successfully connected to database: ${database.databaseName}`
-    );
-  };
+  collections.users = database.collection<User>(COLLECTION_NAMES.users);
+  collections.movies = database.collection<Movie>(COLLECTION_NAMES.movies);
+  collections.seats = database.collection<Seat>(COLLECTION_NAMES.seats);
+  collections.showtimes = database.collection<Showtime>(COLLECTION_NAMES.showtimes);
+
+  await collections.seats.createIndex(
+    {
+      section: 1,
+      row: 1,
+      seat: 1
+    },
+    {
+      unique: true
+    }
+  );
+
+  console.log(`Successfully connected to database: ${database.databaseName}`);
+};
