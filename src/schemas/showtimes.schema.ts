@@ -50,14 +50,4 @@ export const applySchemaValidation = async (db: Db): Promise<void> => {
       throw error;
     }
   }
-
-  await db.collection(collectionName).createIndex(
-    {
-      date: 1,
-      time: 1
-    },
-    {
-      unique: true
-    }
-  );
 };

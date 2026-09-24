@@ -7,11 +7,13 @@ import { applySchemaValidation as applyUserSchemaValidation } from '../schemas/u
 import { applySchemaValidation as applyMovieSchemaValidation } from '../schemas/movies.schema';
 import { applySchemaValidation as applySeatSchemaValidation } from '../schemas/seats.schema';
 import { applySchemaValidation as applyShowtimeSchemaValidation } from '../schemas/showtimes.schema';
+import { applySchemaValidation as applyTicketSchemaValidation } from '../schemas/tickets.schema';
 
 import type { User } from '../models/users.model';
 import type { Movie } from '../models/movies.model';
 import type { Seat } from '../models/seats.model';
 import type { Showtime } from '../models/showtimes.model';
+import type { Ticket } from '../models/tickets.model';
 
 export let mongoClient: mongoDB.MongoClient;
 export let database: mongoDB.Db;
@@ -21,6 +23,7 @@ export const collections = {} as {
   movies: mongoDB.Collection<Movie>;
   seats: mongoDB.Collection<Seat>;
   showtimes: mongoDB.Collection<Showtime>;
+  tickets: mongoDB.Collection<Ticket>;
 };
 
 export const connectToDatabase = async (): Promise<void> => {
@@ -34,17 +37,39 @@ export const connectToDatabase = async (): Promise<void> => {
   await applyMovieSchemaValidation(database);
   await applySeatSchemaValidation(database);
   await applyShowtimeSchemaValidation(database);
+  await applyTicketSchemaValidation(database);
 
   collections.users = database.collection<User>(COLLECTION_NAMES.users);
   collections.movies = database.collection<Movie>(COLLECTION_NAMES.movies);
   collections.seats = database.collection<Seat>(COLLECTION_NAMES.seats);
   collections.showtimes = database.collection<Showtime>(COLLECTION_NAMES.showtimes);
+  collections.tickets = database.collection<Ticket>(COLLECTION_NAMES.tickets);
 
   await collections.seats.createIndex(
     {
       section: 1,
       row: 1,
       seat: 1
+    },
+    {
+      unique: true
+    }
+  );
+
+  await collections.showtimes.createIndex(
+    {
+      date: 1,
+      time: 1
+    },
+    {
+      unique: true
+    }
+  );
+
+  await collections.tickets.createIndex(
+    {
+      showtimeId: 1,
+      seatId: 1
     },
     {
       unique: true

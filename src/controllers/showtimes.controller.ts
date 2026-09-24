@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import { ObjectId, MongoServerError } from 'mongodb';
 import { matchedData } from 'express-validator';
 
-import { collections } from '../services/database.services';
+import { collections, mongoClient } from '../services/database.services';
+import { generateTicketsForShowtime } from '../services/tickets.services';
 import type { Showtime } from '../models/showtimes.model';
 import type { CreateShowtimeInput } from '../dto/showtimes.dto';
 
@@ -74,52 +75,94 @@ export class ShowtimesController {
   };
 
   createShowtimes = async (req: Request, res: Response): Promise<void> => {
+    const data = matchedData(req, {
+      locations: ['body']
+    }) as CreateShowtimeInput;
+    const movieId = new ObjectId(data.movieId);
+    const session = mongoClient.startSession();
     try {
-      const data = matchedData(req, {
-        locations: ['body']
-      }) as CreateShowtimeInput;
-      const movieId = new ObjectId(data.movieId);
-      const movieExists = await collections.movies.findOne({
-        _id: movieId
+      let insertedCount = 0;
+      let ticketsCreated = 0;
+      let showtimeIds: ObjectId[] = [];
+      await session.withTransaction(async () => {
+        const movieExists = await collections.movies.findOne(
+          {
+            _id: movieId
+          },
+          {
+            session
+          }
+        );
+        if (!movieExists) {
+          throw new Error('MOVIE_NOT_FOUND');
+        }
+        const dates = getDatesBetween(data.startDate, data.endDate);
+        const conflicts = await collections.showtimes
+          .find(
+            {
+              date: {
+                $in: dates
+              },
+              time: data.time
+            },
+            {
+              session
+            }
+          )
+          .toArray();
+        if (conflicts.length > 0) {
+          const conflictError = new Error('SHOWTIME_CONFLICT');
+          Object.assign(conflictError, {
+            conflicts: conflicts.map((showtime) => ({
+              date: showtime.date,
+              time: showtime.time
+            }))
+          });
+          throw conflictError;
+        }
+        const showtimes: Showtime[] = dates.map((date) => ({
+          movieId,
+          date,
+          time: data.time,
+          showtimeType: data.showtimeType
+        }));
+        const result = await collections.showtimes.insertMany(showtimes, {
+          session
+        });
+        insertedCount = result.insertedCount;
+        showtimeIds = Object.values(result.insertedIds);
+        for (const showtimeId of showtimeIds) {
+          ticketsCreated += await generateTicketsForShowtime(showtimeId, session);
+        }
       });
-      if (!movieExists) {
+      res.status(201).json({
+        message: 'Showtimes and tickets created successfully',
+        insertedCount,
+        ticketsCreated,
+        showtimeIds
+      });
+    } catch (error) {
+      if (error instanceof Error && error.message === 'MOVIE_NOT_FOUND') {
         res.status(404).json({
           message: 'Movie not found'
         });
         return;
       }
-      const dates = getDatesBetween(data.startDate, data.endDate);
-      const conflicts = await collections.showtimes
-        .find({
-          date: {
-            $in: dates
-          },
-          time: data.time
-        })
-        .toArray();
-      if (conflicts.length > 0) {
+      if (error instanceof Error && error.message === 'SHOWTIME_CONFLICT') {
+        const conflicts = (
+          error as Error & {
+            conflicts?: {
+              date: string;
+              time: string;
+            }[];
+          }
+        ).conflicts;
         res.status(409).json({
           message: 'One or more showtimes conflict with existing showtimes',
-          conflicts: conflicts.map((showtime) => ({
-            date: showtime.date,
-            time: showtime.time
-          }))
+          conflicts
         });
         return;
       }
-      const showtimes: Showtime[] = dates.map((date) => ({
-        movieId,
-        date,
-        time: data.time,
-        showtimeType: data.showtimeType
-      }));
-      const result = await collections.showtimes.insertMany(showtimes);
-      res.status(201).json({
-        message: 'Showtimes created successfully',
-        insertedCount: result.insertedCount,
-        showtimeIds: Object.values(result.insertedIds)
-      });
-    } catch (error) {
       if (error instanceof MongoServerError && error.code === 11000) {
         res.status(409).json({
           message: 'A showtime already exists for one of the selected dates and time'
@@ -130,6 +173,8 @@ export class ShowtimesController {
       res.status(500).json({
         message: 'Error creating showtimes'
       });
+    } finally {
+      await session.endSession();
     }
   };
 }

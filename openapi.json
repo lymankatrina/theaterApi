@@ -951,6 +951,50 @@
           }
         }
       }
+    },
+    "/tickets/generate/{showtimeId}": {
+      "post": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "Generate tickets for a showtime",
+        "description": "Generates one ticket for each configured theater seat for the provided showtime. Administrative access is required.",
+        "parameters": [
+          {
+            "name": "showtimeId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of the showtime",
+            "schema": {
+              "type": "string",
+              "example": "6ab43f8cc9819c4743d6203d"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Tickets created successfully"
+          },
+          "200": {
+            "description": "All tickets already exist for the showtime"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "404": {
+            "description": "One or more tickets already exist for the showtime and seat"
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Error generating tickets"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1214,6 +1258,47 @@
               "standard"
             ],
             "example": "standard"
+          }
+        }
+      },
+      "Ticket": {
+        "type": "object",
+        "required": [
+          "_id",
+          "showtimeId",
+          "seatId",
+          "status"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "6ab43f8cc9819c4743d0000d"
+          },
+          "showtimeId": {
+            "type": "string",
+            "example": "6ab43f8cc9819c4743d6203d"
+          },
+          "seatId": {
+            "type": "string",
+            "example": "6ab43f8cc9819c0000d6203d"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "reserved",
+              "sold"
+            ],
+            "example": "available"
+          },
+          "buyerId": {
+            "type": "string",
+            "example": "6ab43f8cc0000c4743d6203d"
+          },
+          "addedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-09-23T17:30:00.000Z"
           }
         }
       }
