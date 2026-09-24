@@ -6,54 +6,47 @@ import type { UpdateUserInput, UpdateUserRoleInput } from '../dto/users.dto';
 import { collections } from '../services/database.services';
 
 export class UsersController {
-  getUsers = async (
-    _req: Request,
-    res: Response
-  ): Promise<void> => {
+  getUsers = async (req: Request, res: Response): Promise<void> => {
     try {
+      const { email } = matchedData(req, {
+        locations: ['query']
+      });
+      const filter = email ? { email } : {};
       const users = await collections.users
-        .find(
-          {},
-          {
-            projection: {
-              auth0Id: 0
-            }
+        .find(filter, {
+          projection: {
+            auth0Id: 0
           }
-        )
-        .sort({ 
-          lastName: 1, 
-          firstName: 1 
+        })
+        .sort({
+          lastName: 1,
+          firstName: 1
         })
         .toArray();
       res.status(200).json(users);
     } catch (error) {
-      console.error(
-        'Error fetching users:',
-        error
-      );
+      console.error('Error fetching users:', error);
       res.status(500).json({
         message: 'Failed to fetch users'
       });
     }
   };
 
-  getUserById = async (
-    req: Request, 
-    res: Response
-  ): Promise<void> => {
+  getUserById = async (req: Request, res: Response): Promise<void> => {
     const { userId } = matchedData(req, {
       locations: ['params']
     });
     try {
-      const user =
-        await collections.users.findOne({
+      const user = await collections.users.findOne(
+        {
           _id: new ObjectId(userId)
         },
-      {
-        projection: {
-          auth0Id: 0
+        {
+          projection: {
+            auth0Id: 0
+          }
         }
-      });
+      );
       if (!user) {
         res.status(404).json({
           message: 'User not found'
@@ -62,55 +55,14 @@ export class UsersController {
       }
       res.status(200).json(user);
     } catch (error) {
-      console.error(
-        'Error fetching user:',
-        error
-      );
+      console.error('Error fetching user:', error);
       res.status(500).json({
         message: 'Failed to fetch user'
       });
     }
   };
 
-  getUserByEmail = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
-    const { email } = matchedData(req, {
-      locations: ['params']
-    });
-    try {
-      const user = 
-        await collections.users.findOne({ 
-          email 
-        },
-      {
-        projection: {
-          auth0Id: 0
-        }
-      });
-      if (!user) {
-        res.status(404).json({
-          message: 'User not found'
-        });
-        return;
-      }
-      res.status(200).json(user);
-    } catch (error) {
-      console.error(
-        'Error fetching user by email:',
-        error
-      );
-      res.status(500).json({
-        message: 'Failed to fetch user'
-      });
-    }
-  };
-
-  getCurrentUser = async (
-    req:Request,
-    res: Response
-  ): Promise<void> => {
+  getCurrentUser = async (req: Request, res: Response): Promise<void> => {
     const authUser = req.oidc?.user;
     if (!authUser?.sub) {
       res.status(401).json({
@@ -119,10 +71,9 @@ export class UsersController {
       return;
     }
     try {
-      const user =
-        await collections.users.findOne({
-          auth0Id: authUser.sub
-        });
+      const user = await collections.users.findOne({
+        auth0Id: authUser.sub
+      });
       if (!user) {
         res.status(404).json({
           message: 'User not found'
@@ -134,20 +85,14 @@ export class UsersController {
         role: user.role
       });
     } catch (error) {
-      console.error(
-        'Error fetching current user:',
-        error
-      );
+      console.error('Error fetching current user:', error);
       res.status(500).json({
         message: 'Failed to fetch current user'
       });
     }
   };
 
-  updateUserById = async (
-    req: Request, 
-    res: Response
-  ): Promise<void> => {
+  updateUserById = async (req: Request, res: Response): Promise<void> => {
     const { userId } = matchedData(req, {
       locations: ['params']
     });
@@ -161,15 +106,14 @@ export class UsersController {
       return;
     }
     try {
-      const result = 
-        await collections.users.updateOne(
-          { 
-            _id: new ObjectId(userId) 
-          }, 
-          { 
-            $set: data 
-          }
-        );
+      const result = await collections.users.updateOne(
+        {
+          _id: new ObjectId(userId)
+        },
+        {
+          $set: data
+        }
+      );
       if (result.matchedCount === 0) {
         res.status(404).json({
           message: 'User not found'
@@ -177,35 +121,23 @@ export class UsersController {
         return;
       }
       res.status(200).json({
-        message:
-          result.modifiedCount > 0
-          ? 'User updated successfully'
-          : 'User is already up to date'
+        message: result.modifiedCount > 0 ? 'User updated successfully' : 'User is already up to date'
       });
     } catch (error) {
-      if (
-        error instanceof MongoServerError &&
-        error.code === 11000
-      ) {
+      if (error instanceof MongoServerError && error.code === 11000) {
         res.status(409).json({
           message: 'Email already in use'
         });
         return;
       }
-      console.error(
-        'Error updating user:',
-        error
-      );
+      console.error('Error updating user:', error);
       res.status(500).json({
         message: 'Failed to update user'
       });
     }
   };
 
-  updateUserRole = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
+  updateUserRole = async (req: Request, res: Response): Promise<void> => {
     const { userId } = matchedData(req, {
       locations: ['params']
     });
@@ -213,17 +145,16 @@ export class UsersController {
       locations: ['body']
     }) as UpdateUserRoleInput;
     try {
-      const result = 
-        await collections.users.updateOne(
-          {
-            _id: new ObjectId(userId)
-          },
-          {
-            $set: {
-              role: data.role
-            }
+      const result = await collections.users.updateOne(
+        {
+          _id: new ObjectId(userId)
+        },
+        {
+          $set: {
+            role: data.role
           }
-        );
+        }
+      );
       if (result.matchedCount === 0) {
         res.status(404).json({
           message: 'User not found'
@@ -231,34 +162,24 @@ export class UsersController {
         return;
       }
       res.status(200).json({
-        message: result.modifiedCount > 0
-          ? 'User role updated successfully'
-          : 'User role is already up to date'
+        message: result.modifiedCount > 0 ? 'User role updated successfully' : 'User role is already up to date'
       });
     } catch (error) {
-      console.error(
-        'Error updating user role:',
-        error
-      );
+      console.error('Error updating user role:', error);
       res.status(500).json({
-        message:
-          'Failed to update user role'
+        message: 'Failed to update user role'
       });
     }
   };
 
-  deleteUserById = async (
-    req: Request, 
-    res: Response
-  ): Promise<void> => {
+  deleteUserById = async (req: Request, res: Response): Promise<void> => {
     const { userId } = matchedData(req, {
       locations: ['params']
     });
     try {
-      const result = 
-        await collections.users.deleteOne({ 
-          _id: new ObjectId(userId)
-        });
+      const result = await collections.users.deleteOne({
+        _id: new ObjectId(userId)
+      });
       if (result.deletedCount === 0) {
         res.status(404).json({
           message: 'User not found'
@@ -269,10 +190,7 @@ export class UsersController {
         message: 'User deleted successfully'
       });
     } catch (error) {
-      console.error(
-        'Error deleting user:',
-        error
-      );
+      console.error('Error deleting user:', error);
       res.status(500).json({
         message: 'Failed to delete user'
       });

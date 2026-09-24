@@ -5,12 +5,10 @@ import swaggerDocument from '../../openapi.json';
 
 export const swaggerRouter = Router();
 
-swaggerRouter.use(
-  '/api-docs',
-  swaggerUi.serve
-);
+swaggerRouter.use('/api-docs', swaggerUi.serve);
 
-swaggerRouter.get(
-  '/api-docs',
-  swaggerUi.setup(swaggerDocument)
-);
+swaggerRouter.get('/api-docs', swaggerUi.setup(swaggerDocument));
+
+swaggerRouter.get('/openapi.json', (_req, res) => {
+  res.json(swaggerDocument);
+});

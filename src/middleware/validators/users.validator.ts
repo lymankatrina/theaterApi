@@ -1,37 +1,23 @@
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 import { collections } from '../../services/database.services';
 import { USER_ROLES } from '../../types/users.types';
 
 const userEmailParamValidationRules = () => {
-  return [
-    param('email')
-      .trim()
-      .isEmail()
-      .withMessage(
-        'Email must be valid'
-      )
-      .normalizeEmail()
-  ];
+  return [param('email').trim().isEmail().withMessage('Email must be valid').normalizeEmail()];
+};
+
+const userEmailQueryValidationRules = () => {
+  return [query('email').optional().isEmail().withMessage('Email must be a valid email address').normalizeEmail()];
 };
 
 const userIdParamValidationRules = () => {
-  return [
-    param('userId')
-      .isMongoId()
-      .withMessage(
-        'User ID must be a valid ObjectId'
-      )
-  ];
+  return [param('userId').isMongoId().withMessage('User ID must be a valid ObjectId')];
 };
 
-const userFieldValidationRules = (
-  isUpdate = false
-) => {
+const userFieldValidationRules = (isUpdate = false) => {
   const field = (name: string) => {
     const chain = body(name);
-    return isUpdate
-      ? chain.optional()
-      : chain;
+    return isUpdate ? chain.optional() : chain;
   };
   return [
     field('firstName')
@@ -70,9 +56,7 @@ const userFieldValidationRules = (
       .isString()
       .withMessage('Phone must be a string')
       .trim()
-      .matches(
-        /^(\([0-9]{3}\)\s|[0-9]{3}-)[0-9]{3}-[0-9]{4}$/
-      )
+      .matches(/^(\([0-9]{3}\)\s|[0-9]{3}-)[0-9]{3}-[0-9]{4}$/)
       .withMessage('Enter a valid US Phone Number'),
     field('email')
       .isString()
@@ -87,19 +71,12 @@ const userFieldValidationRules = (
       .bail()
       .normalizeEmail()
       .custom(async (email, { req }) => {
-        const userId = 
-          req.params?.userId;
-        const existingUser = 
-          await collections.users.findOne({
-            email
+        const userId = req.params?.userId;
+        const existingUser = await collections.users.findOne({
+          email
         });
-        if (
-          existingUser &&
-          existingUser._id.toString() !== userId
-        ) {
-          throw new Error(
-            'Email already in use'
-          );
+        if (existingUser && existingUser._id.toString() !== userId) {
+          throw new Error('Email already in use');
         }
         return true;
       })
@@ -124,6 +101,7 @@ const updateUserRoleValidationRules = () => {
 
 export {
   userEmailParamValidationRules,
+  userEmailQueryValidationRules,
   userIdParamValidationRules,
   updateUserValidationRules,
   updateUserRoleValidationRules

@@ -8,13 +8,6 @@ import { showtimeIdParamValidationRules } from '../middleware/validators/showtim
 const ticketsRouter = Router();
 const controller = new TicketsController();
 
-ticketsRouter.post(
-  '/generate/:showtimeId',
-  requiresAuth(),
-  showtimeIdParamValidationRules(),
-  validAdmin,
-  validate,
-  controller.generateTicketsFromShowtime
-);
+ticketsRouter.post('/:showtimeId', requiresAuth(), showtimeIdParamValidationRules(), validAdmin, validate, controller.generateTicketsFromShowtime);
 
 export { ticketsRouter };

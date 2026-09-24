@@ -3,23 +3,25 @@ import { ObjectId } from 'mongodb';
 import { matchedData } from 'express-validator';
 
 import type { Movie } from '../models/movies.model';
-import type { 
-  CreateMovieInput, 
-  UpdateMovieInput 
-} from '../dto/movies.dto';
+import type { CreateMovieInput, UpdateMovieInput } from '../dto/movies.dto';
 
-import { collections } from '../services/database.services';
+import { collections, mongoClient } from '../services/database.services';
 
 export class MoviesController {
-  getMovies = async (
-    _req: Request, 
-    res: Response
-  ): Promise<void> => {
+  getMovies = async (req: Request, res: Response): Promise<void> => {
     try {
-      const movies = await collections.movies
-        .find()
-        .sort({ title: 1 })
-        .toArray();
+      const { title } = matchedData(req, {
+        locations: ['query']
+      });
+      const filter = title
+        ? {
+            title: {
+              $regex: title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+              $options: 'i'
+            }
+          }
+        : {};
+      const movies = await collections.movies.find(filter).sort({ title: 1 }).toArray();
       res.status(200).json(movies);
     } catch (error) {
       console.error('Error getting movies:', error);
@@ -29,23 +31,20 @@ export class MoviesController {
     }
   };
 
-  getMovieById = async (
-    req: Request, 
-    res: Response
-  ): Promise<void> => {
+  getMovieById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { movieId } = matchedData(req, {
         locations: ['params']
       });
       const movie = await collections.movies.findOne({
-        _id: new ObjectId(movieId) 
+        _id: new ObjectId(movieId)
       });
       if (!movie) {
         res.status(404).json({
           message: 'Movie not found'
         });
         return;
-      } 
+      }
       res.status(200).json(movie);
     } catch (error) {
       console.error('Error getting movie:', error);
@@ -55,43 +54,7 @@ export class MoviesController {
     }
   };
 
-  searchByTitle = async (
-    req: Request, 
-    res: Response
-  ): Promise<void> => {
-    try {
-      const { title } = matchedData(req, {
-        locations: ['params']
-      });
-      const escapedTitle = title.replace(
-        /[.*+?^${}()|[\]\\]/g,
-        '\\$&'
-      );
-      const movies = await collections.movies
-        .find({
-          title: {
-            $regex: escapedTitle,
-            $options: 'i'
-          }
-        })
-        .sort({ title: 1 })
-        .toArray();
-      res.status(200).json(movies);
-    } catch (error) {
-      console.error(
-        'Error searching by title', 
-        error
-      );
-      res.status(500).json({ 
-        message: 'Error searching by movie title' 
-      });
-    }
-  };
-
-  createMovie = async (
-    req: Request, 
-    res: Response
-  ): Promise<void> => {
+  createMovie = async (req: Request, res: Response): Promise<void> => {
     try {
       const data = matchedData(req, {
         locations: ['body']
@@ -99,35 +62,26 @@ export class MoviesController {
       const newMovie: Movie = {
         ...data
       };
-      const result = 
-        await collections.movies.insertOne(
-          newMovie
-        );
-      res.status(201).json({ 
+      const result = await collections.movies.insertOne(newMovie);
+      res.status(201).json({
         message: 'Successfully created a new movie',
         movieId: result.insertedId
       });
     } catch (error) {
-      console.error(
-        'Error creating movie', 
-        error
-      );
-      res.status(500).json({ 
-        message: 'Unable to create movie' 
+      console.error('Error creating movie', error);
+      res.status(500).json({
+        message: 'Unable to create movie'
       });
     }
   };
 
-  updateMovieById = async (
-    req: Request, 
-    res: Response
-  ): Promise<void> => {
+  updateMovieById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { movieId } = matchedData(req, {
         locations: ['params']
-      }); 
+      });
       const data = matchedData(req, {
-        locations: ['body'] 
+        locations: ['body']
       }) as UpdateMovieInput;
       if (Object.keys(data).length === 0) {
         res.status(400).json({
@@ -138,15 +92,14 @@ export class MoviesController {
       const updatedMovie: Partial<Movie> = {
         ...data
       };
-      const result = 
-        await collections.movies.updateOne(
-          { 
-            _id: new ObjectId(movieId) 
-          }, 
-          { 
-            $set: updatedMovie 
-          }
-        );
+      const result = await collections.movies.updateOne(
+        {
+          _id: new ObjectId(movieId)
+        },
+        {
+          $set: updatedMovie
+        }
+      );
       if (result.matchedCount === 0) {
         res.status(404).json({
           message: 'Movie not found'
@@ -154,50 +107,123 @@ export class MoviesController {
         return;
       }
       res.status(200).json({
-        message:
-          result.modifiedCount > 0
-            ? 'Successfully updated movie'
-            : 'Movie is already up to date'
+        message: result.modifiedCount > 0 ? 'Successfully updated movie' : 'Movie is already up to date'
       });
     } catch (error) {
-      console.error(
-        'Error updating movie', 
-        error
-      );
+      console.error('Error updating movie', error);
       res.status(500).json({
         message: 'Unable to update movie'
       });
     }
   };
 
-  deleteMovieById = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
+  deleteMovieById = async (req: Request, res: Response): Promise<void> => {
+    const { movieId } = matchedData(req, {
+      locations: ['params']
+    });
+    const movieObjectId = new ObjectId(movieId);
+    const session = mongoClient.startSession();
     try {
-      const { movieId } = matchedData(req, {
-        locations: ['params']
+      let deletedShowtimes = 0;
+      let deletedTickets = 0;
+      await session.withTransaction(async () => {
+        const movie = await collections.movies.findOne(
+          {
+            _id: movieObjectId
+          },
+          {
+            session
+          }
+        );
+        if (!movie) {
+          throw new Error('MOVIE_NOT_FOUND');
+        }
+        const showtimes = await collections.showtimes
+          .find(
+            {
+              movieId: movieObjectId
+            },
+            {
+              session
+            }
+          )
+          .toArray();
+        const showtimeIds = showtimes.filter((showtime) => showtime._id).map((showtime) => showtime._id);
+        if (showtimeIds.length > 0) {
+          const protectedTicket = await collections.tickets.findOne(
+            {
+              showtimeId: {
+                $in: showtimeIds
+              },
+              status: {
+                $in: ['reserved', 'sold']
+              }
+            },
+            {
+              session
+            }
+          );
+          if (protectedTicket) {
+            throw new Error('MOVIE_HAS_PROTECTED_TICKETS');
+          }
+          const ticketResult = await collections.tickets.deleteMany(
+            {
+              showtimeId: {
+                $in: showtimeIds
+              }
+            },
+            {
+              session
+            }
+          );
+          deletedTickets = ticketResult.deletedCount;
+          const showtimeResult = await collections.showtimes.deleteMany(
+            {
+              movieId: movieObjectId
+            },
+            {
+              session
+            }
+          );
+          deletedShowtimes = showtimeResult.deletedCount;
+        }
+        const movieResult = await collections.movies.deleteOne(
+          {
+            _id: movieObjectId
+          },
+          {
+            session
+          }
+        );
+        if (movieResult.deletedCount !== 1) {
+          throw new Error('MOVIE_DELETE_FAILED');
+        }
       });
-      const result = await collections.movies.deleteOne({
-        _id: new ObjectId(movieId)
+      res.status(200).json({
+        message: 'Movie, showtimes, and tickets deleted successfully',
+        deletedMovies: 1,
+        deletedShowtimes,
+        deletedTickets
       });
-      if (result.deletedCount === 0) {
+    } catch (error) {
+      if (error instanceof Error && error.message === 'MOVIE_NOT_FOUND') {
         res.status(404).json({
           message: 'Movie not found'
         });
         return;
       }
-      res.status(200).json({
-        message: 'Successfully deleted movie'
-      });
-    } catch (error) {
-      console.error(
-        'Error deleting movie',
-        error
-      );
+      if (error instanceof Error && error.message === 'MOVIE_HAS_PROTECTED_TICKETS') {
+        res.status(409).json({
+          message: 'Movie cannot be deleted because one or more showtimes have reserved or sold tickets'
+        });
+        return;
+      }
+      console.error('Error deleting movie', error);
       res.status(500).json({
         message: 'Unable to delete movie'
       });
+    } finally {
+      await session.endSession();
     }
   };
 }

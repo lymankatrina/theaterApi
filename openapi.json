@@ -12,13 +12,26 @@
     }
   ],
   "paths": {
-    "/users/all": {
+    "/users": {
       "get": {
         "tags": [
           "Users"
         ],
         "summary": "Get all users",
-        "description": "Returns all users. Administrative access is required.",
+        "description": "Returns all users or filters users by email address whtn the optional email query parameter is provided. Administrative access is required.",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "description": "Filter users by email address",
+            "schema": {
+              "type": "string",
+              "format": "email",
+              "example": "john.smith@example.com"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Users retrieved successfully",
@@ -39,6 +52,9 @@
           "403": {
             "description": "Administrative access required"
           },
+          "422": {
+            "description": "Email query parameter not valid"
+          },
           "500": {
             "description": "Error getting users"
           }
@@ -58,7 +74,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "Object",
+                  "type": "object",
                   "required": [
                     "userName",
                     "role"
@@ -87,55 +103,6 @@
           },
           "500": {
             "description": "Error getting user"
-          }
-        }
-      }
-    },
-    "/users/email/{email}": {
-      "get": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Get user by email",
-        "description": "Returns a user by email. Administrative access is required.",
-        "parameters": [
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "description": "Email address of the user",
-            "schema": {
-              "type": "string",
-              "format": "email",
-              "example": "john.smith@example.com"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User is not authenticated"
-          },
-          "403": {
-            "description": "Administrative access required"
-          },
-          "404": {
-            "description": "User not found"
-          },
-          "422": {
-            "description": "User Email parameter not valid"
-          },
-          "500": {
-            "description": "Error getting user by email"
           }
         }
       }
@@ -187,9 +154,7 @@
             "description": "Error getting user by ID"
           }
         }
-      }
-    },
-    "/users/update/{userId}": {
+      },
       "put": {
         "tags": [
           "Users"
@@ -201,8 +166,11 @@
             "name": "userId",
             "in": "path",
             "required": true,
+            "description": "MongoDB ObjectId of the user",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "66c8e0d1f0a123456789abcd"
             }
           }
         ],
@@ -257,16 +225,56 @@
             "description": "Email already in use"
           },
           "422": {
-            "description": "Validation failed"
+            "description": "User ID parameter not valid"
           },
           "500": {
             "description": "Failed to update user"
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete a user",
+        "description": "Deletes a user. Administrative access is required.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of the user",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "66c8e0d1f0a123456789abcd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "422": {
+            "description": "User ID parameter not valid"
+          },
+          "500": {
+            "description": "Failed to delete user"
+          }
+        }
       }
     },
-    "/users/role/{userId}": {
-      "put": {
+    "/users/{userId}/role": {
+      "patch": {
         "tags": [
           "Users"
         ],
@@ -277,8 +285,11 @@
             "name": "userId",
             "in": "path",
             "required": true,
+            "description": "MongoDB ObjectId of the user",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "66c8e0d1f0a123456789abcd"
             }
           }
         ],
@@ -322,7 +333,7 @@
             "description": "User not found"
           },
           "422": {
-            "description": "Validation failed"
+            "description": "User ID parameter not valid"
           },
           "500": {
             "description": "Failed to update user role"
@@ -330,52 +341,26 @@
         }
       }
     },
-    "/users/delete/{userId}": {
-      "delete": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Delete a user",
-        "description": "Deletes a user. Administrative access is required.",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User deleted successfully"
-          },
-          "401": {
-            "description": "User is not authenticated"
-          },
-          "403": {
-            "description": "Administrative access required"
-          },
-          "404": {
-            "description": "User not found"
-          },
-          "422": {
-            "description": "Validation failed"
-          },
-          "500": {
-            "description": "Failed to delete user"
-          }
-        }
-      }
-    },
-    "/movies/all": {
+    "/movies": {
       "get": {
         "tags": [
           "Movies"
         ],
         "summary": "Get all movies",
-        "description": "Returns all movies sorted alphabetically by title.",
+        "description": "Returns all movies sorted alphabetically by title. Optionally filters movies by title using the title query parameter.",
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "required": false,
+            "description": "Filters movies by title. The search is case-insensitive and may match part of a movie title.",
+            "schema": {
+              "type": "string",
+              "maxLength": 85
+            },
+            "example": "spider"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Movies retrieved successfully",
@@ -390,51 +375,45 @@
               }
             }
           },
+          "422": {
+            "description": "Invalid query parameter"
+          },
           "500": {
             "description": "Error getting movies"
           }
         }
-      }
-    },
-    "/movies/search/{title}": {
-      "get": {
+      },
+      "post": {
         "tags": [
           "Movies"
         ],
-        "summary": "Search movies by title",
-        "description": "Returns movies with titles that contain the provided search text. The search is case-insensitive.",
-        "parameters": [
-          {
-            "name": "title",
-            "in": "path",
-            "required": true,
-            "description": "Movie title or partial title to search for",
-            "schema": {
-              "type": "string",
-              "maxLength": 85,
-              "example": "spider"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Movie search completed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Movie"
-                  }
-                }
+        "summary": "Create a new movie",
+        "description": "Creates a new movie. Administrative access is required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMovieInput"
               }
             }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Movie created successfully"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
           },
           "422": {
-            "description": "Validation failed"
+            "description": "Invalid movie data"
           },
           "500": {
-            "description": "Error searching by movie title"
+            "description": "Unable to create movie"
           }
         }
       }
@@ -477,134 +456,7 @@
             "description": "Error getting movie by ID"
           }
         }
-      }
-    },
-    "/movies/new": {
-      "post": {
-        "tags": [
-          "Movies"
-        ],
-        "summary": "Create a new movie",
-        "description": "Creates a new movie. Administrative access is required.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "title",
-                  "tagLine",
-                  "overview",
-                  "year",
-                  "certification",
-                  "releaseDate",
-                  "genres",
-                  "runtime",
-                  "poster",
-                  "trailer"
-                ],
-                "properties": {
-                  "title": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 85,
-                    "example": "The Shawshank Redemption"
-                  },
-                  "tagLine": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 85,
-                    "example": "Fear can hold you prisoner. Hope can set you free."
-                  },
-                  "overview": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 850,
-                    "example": "Two imprisoned men bond over a number of years."
-                  },
-                  "year": {
-                    "type": "integer",
-                    "minimum": 1888,
-                    "maximum": 3000,
-                    "example": 1994
-                  },
-                  "certification": {
-                    "type": "string",
-                    "enum": [
-                      "G",
-                      "PG",
-                      "PG-13",
-                      "R",
-                      "NC-17"
-                    ],
-                    "example": "R"
-                  },
-                  "releaseDate": {
-                    "type": "string",
-                    "format": "date",
-                    "example": "1994-09-23"
-                  },
-                  "genres": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 100,
-                    "example": "Drama"
-                  },
-                  "runtime": {
-                    "type": "string",
-                    "example": "2h 22m"
-                  },
-                  "imdbScore": {
-                    "type": "number",
-                    "format": "float",
-                    "minimum": 0,
-                    "maximum": 10,
-                    "example": 9.3
-                  },
-                  "rottenTomatoes": {
-                    "type": "string",
-                    "example": "89%"
-                  },
-                  "fandangoAudienceScore": {
-                    "type": "string",
-                    "example": "98%"
-                  },
-                  "poster": {
-                    "type": "string",
-                    "format": "uri",
-                    "example": "https://example.com/poster.jpg"
-                  },
-                  "trailer": {
-                    "type": "string",
-                    "format": "uri",
-                    "example": "https://example.com/trailer"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Movie created successfully"
-          },
-          "401": {
-            "description": "User is not authenticated"
-          },
-          "403": {
-            "description": "Administrative access required"
-          },
-          "422": {
-            "description": "Invalid movie data"
-          },
-          "500": {
-            "description": "Unable to create movie"
-          }
-        }
-      }
-    },
-    "/movies/update/{movieId}": {
+      },
       "put": {
         "tags": [
           "Movies"
@@ -730,15 +582,13 @@
             "description": "Unable to update movie"
           }
         }
-      }
-    },
-    "/movies/delete/{movieId}": {
+      },
       "delete": {
         "tags": [
           "Movies"
         ],
         "summary": "Delete a movie",
-        "description": "Deletes an existing movie. Administrative access is required.",
+        "description": "Deletes an existing movie and its associated showtimes and tickets. A movie cannot be deleted if any associated tickets are reserved or sold. Administrative access is required.",
         "parameters": [
           {
             "name": "movieId",
@@ -752,7 +602,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Movie deleted successfully"
+            "description": "Movie and associated showtimes and tickets deleted successfully"
           },
           "401": {
             "description": "User is not authenticated"
@@ -763,8 +613,11 @@
           "404": {
             "description": "Movie not found"
           },
+          "409": {
+            "description": "Movie cannot be deleted because it has reserved or sold tickets"
+          },
           "422": {
-            "description": "Validation failed"
+            "description": "Movie ID parameter not valid"
           },
           "500": {
             "description": "Failed to delete movie"
@@ -772,7 +625,7 @@
         }
       }
     },
-    "/seats/all": {
+    "/seats": {
       "get": {
         "tags": [
           "Seats"
@@ -799,13 +652,26 @@
         }
       }
     },
-    "/showtimes/all": {
+    "/showtimes": {
       "get": {
         "tags": [
           "Showtimes"
         ],
         "summary": "Get all showtimes",
-        "description": "Returns all showtimes.",
+        "description": "Returns all showtimes. Optionally filters showtimes by movie using the movieId query parameter.",
+        "parameters": [
+          {
+            "name": "movieId",
+            "in": "query",
+            "required": false,
+            "description": "Filters showtimes by movieId. If provided, the value must be a valid MongoDB ObjectId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "68d07c4a1234567890abcdef"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Showtimes retrieved successfully",
@@ -820,13 +686,56 @@
               }
             }
           },
+          "422": {
+            "description": "Invalid query parameter"
+          },
           "500": {
             "description": "Error getting showtimes"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Create new showtimes",
+        "description": "Creates new showtimes for each date between the provided start date and end date and automatically generates tickets for each created showtime. Administrative access is required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShowtimeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Showtimes and tickets created successfully"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "404": {
+            "description": "Movie not found"
+          },
+          "409": {
+            "description": "One or more showtimes conflict with existing showtimes"
+          },
+          "422": {
+            "description": "Invalid showtime data"
+          },
+          "500": {
+            "description": "Error creating showtimes"
+          }
+        }
       }
     },
-    "/showtimes/showtime/{showtimeId}": {
+    "/showtimes/{showtimeId}": {
       "get": {
         "tags": [
           "Showtimes"
@@ -866,70 +775,29 @@
             "description": "Error retrieving showtime by ID"
           }
         }
-      }
-    },
-    "/showtimes/search/{movieId}": {
-      "get": {
+      },
+      "delete": {
         "tags": [
           "Showtimes"
         ],
-        "summary": "Get showtimes by Movie ID",
-        "description": "Returns all showtimes for the provided movie ID.",
+        "summary": "Delete a showtime",
+        "description": "Deletes a showtime and its associated tickets. A showtime cannot be deleted if any associated tickets are reserved or sold. Administrative access is required.",
         "parameters": [
           {
-            "name": "movieId",
+            "name": "showtimeId",
             "in": "path",
-            "description": "MongoDB ObjectId of the movie",
-            "example": "6ab1ce9c052d507320602a7d",
             "required": true,
+            "description": "MongoDB ObjectId of the showtime",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "66c8e0d1f0a000456789abcd"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Showtimes retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Showtime"
-                  }
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation failed"
-          },
-          "500": {
-            "description": "Error getting showtimes by ID"
-          }
-        }
-      }
-    },
-    "/showtimes/new": {
-      "post": {
-        "tags": [
-          "Showtimes"
-        ],
-        "summary": "Create new showtimes",
-        "description": "Creates new showtimes for each date between the provided start date and end date. Administrative access is required.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateShowtimeInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Showtimes created successfully"
+            "description": "Showtime and associated tickets deleted successfully"
           },
           "401": {
             "description": "User is not authenticated"
@@ -938,21 +806,21 @@
             "description": "Administrative access required"
           },
           "404": {
-            "description": "Movie not found"
+            "description": "Showtime not found"
           },
           "409": {
-            "description": "One or more showtimes conflict with existing showtimes"
+            "description": "Showtime cannot be deleted because it has reserved or sold tickets"
           },
           "422": {
-            "description": "Invalid showtime data"
+            "description": "Showtime ID parameter not valid"
           },
           "500": {
-            "description": "Error creating showtimes"
+            "description": "Error deleting showtime"
           }
         }
       }
     },
-    "/tickets/generate/{showtimeId}": {
+    "/tickets/{showtimeId}": {
       "post": {
         "tags": [
           "Tickets"
@@ -1066,6 +934,98 @@
             "type": "string",
             "example": "68d07c4a1234567890abcdef"
           },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 85,
+            "example": "Coyote vs. Acme"
+          },
+          "tagLine": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 85,
+            "example": "The movie Acme doesn't want you to see."
+          },
+          "overview": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 850,
+            "example": "A tenacious coyote takes on the ACME Corporation."
+          },
+          "year": {
+            "type": "integer",
+            "minimum": 1888,
+            "maximum": 3000,
+            "example": 2026
+          },
+          "certification": {
+            "type": "string",
+            "enum": [
+              "G",
+              "PG",
+              "PG-13",
+              "R",
+              "NC-17"
+            ],
+            "example": "PG"
+          },
+          "releaseDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-08-28"
+          },
+          "genres": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100,
+            "example": "Comedy, Animation"
+          },
+          "runtime": {
+            "type": "string",
+            "example": "1h 43m"
+          },
+          "imdbScore": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 10,
+            "example": 7.5
+          },
+          "rottenTomatoes": {
+            "type": "string",
+            "example": "96%"
+          },
+          "fandangoAudienceScore": {
+            "type": "string",
+            "example": "95%"
+          },
+          "poster": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/poster.jpg"
+          },
+          "trailer": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/trailer"
+          }
+        }
+      },
+      "CreateMovieInput": {
+        "type": "object",
+        "required": [
+          "title",
+          "tagLine",
+          "overview",
+          "year",
+          "certification",
+          "releaseDate",
+          "genres",
+          "runtime",
+          "poster",
+          "trailer"
+        ],
+        "properties": {
           "title": {
             "type": "string",
             "minLength": 1,

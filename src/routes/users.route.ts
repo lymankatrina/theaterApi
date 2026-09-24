@@ -2,71 +2,40 @@ import { Router } from 'express';
 import { requiresAuth } from 'express-openid-connect';
 import { UsersController } from '../controllers/users.controller';
 
-import { 
-  validUser, 
-  validAdmin,
-  validUserOrAdmin 
-} from '../middleware/permissions.middleware';
+import { validUser, validAdmin, validUserOrAdmin } from '../middleware/permissions.middleware';
 
-import { 
-  userIdParamValidationRules, 
-  userEmailParamValidationRules, 
+import {
+  userIdParamValidationRules,
   updateUserValidationRules,
-  updateUserRoleValidationRules
+  updateUserRoleValidationRules,
+  userEmailQueryValidationRules
 } from '../middleware/validators/users.validator';
 
-import { validate }  from '../middleware/validators/validate';
+import { validate } from '../middleware/validators/validate';
 import { checkUserExists } from '../middleware/users.middleware';
 
 export const userRouter = Router();
 
 const controller = new UsersController();
 
-userRouter.get(
-  '/all', 
-  requiresAuth(), 
-  validAdmin, 
-  controller.getUsers
-); 
+userRouter.get('/', requiresAuth(), userEmailQueryValidationRules(), validate, validAdmin, controller.getUsers);
 
-userRouter.get(
-  '/me',
-  requiresAuth(),
-  checkUserExists,
-  validUser,
-  controller.getCurrentUser
-);
+userRouter.get('/me', requiresAuth(), checkUserExists, validUser, controller.getCurrentUser);
 
-userRouter.get(
-  '/email/:email', 
-  requiresAuth(),
-  validAdmin,
-  userEmailParamValidationRules(),
-  validate, 
-  controller.getUserByEmail
-);
-
-userRouter.get(
-  '/:userId', 
-  requiresAuth(), 
-  validAdmin, 
-  userIdParamValidationRules(), 
-  validate, 
-  controller.getUserById
-);
+userRouter.get('/:userId', requiresAuth(), validAdmin, userIdParamValidationRules(), validate, controller.getUserById);
 
 userRouter.put(
-  '/update/:userId', 
-  requiresAuth(), 
-  userIdParamValidationRules(), 
-  updateUserValidationRules(), 
-  validate, 
+  '/:userId',
+  requiresAuth(),
+  userIdParamValidationRules(),
+  updateUserValidationRules(),
+  validate,
   validUserOrAdmin,
   controller.updateUserById
 );
 
-userRouter.put(
-  '/role/:userId',
+userRouter.patch(
+  '/:userId/role',
   requiresAuth(),
   validAdmin,
   userIdParamValidationRules(),
@@ -75,13 +44,6 @@ userRouter.put(
   controller.updateUserRole
 );
 
-userRouter.delete(
-  '/delete/:userId', 
-  requiresAuth(), 
-  validAdmin, 
-  userIdParamValidationRules(), 
-  validate, 
-  controller.deleteUserById
-);
+userRouter.delete('/:userId', requiresAuth(), validAdmin, userIdParamValidationRules(), validate, controller.deleteUserById);
 
 export default userRouter;

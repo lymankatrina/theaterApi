@@ -1,32 +1,21 @@
-import {
-  body,
-  param
-} from 'express-validator';
+import { body, param, query } from 'express-validator';
 
-import {
-  MOVIE_CERTIFICATIONS
-} from '../../types/movies.types';
+import { MOVIE_CERTIFICATIONS } from '../../types/movies.types';
 
-import {
-  validDateString
-} from '../../helpers/validationHelpers';
+import { validDateString } from '../../helpers/validationHelpers';
 
 export const movieIdParamValidationRules = () => {
-  return [
-    param('movieId')
-      .isMongoId()
-      .withMessage('Movie ID must be a valid ObjectId')
-  ];
+  return [param('movieId').isMongoId().withMessage('Movie ID must be a valid ObjectId')];
 };
 
-const movieFieldValidationRules = (
-  isUpdate = false
-) => {
+export const movieIdQueryValidationRules = () => {
+  return [query('movieId').optional().isMongoId().withMessage('Movie ID must be a valid ObjectId')];
+};
+
+const movieFieldValidationRules = (isUpdate = false) => {
   const field = (name: string) => {
     const chain = body(name);
-    return isUpdate 
-      ? chain.optional() 
-      : chain;
+    return isUpdate ? chain.optional() : chain;
   };
   return [
     field('title')
@@ -47,21 +36,14 @@ const movieFieldValidationRules = (
       .trim()
       .isLength({ min: 1, max: 850 })
       .withMessage('Overview must be between 1 and 850 characters'),
-    field('year')
-      .isInt({ min: 1888, max: 3000 })
-      .withMessage('Movie year must be between 1888 and 3000')
-      .toInt(),
+    field('year').isInt({ min: 1888, max: 3000 }).withMessage('Movie year must be between 1888 and 3000').toInt(),
     field('certification')
       .isString()
       .withMessage('Certification must be a string')
       .trim()
       .isIn([...MOVIE_CERTIFICATIONS])
       .withMessage('Certification must be a valid movie certification'),
-    field('releaseDate')
-      .isString()
-      .withMessage('Release Date must be a string')
-      .trim()
-      .custom(validDateString),
+    field('releaseDate').isString().withMessage('Release Date must be a string').trim().custom(validDateString),
     field('genres')
       .isString()
       .withMessage('Genres must be a string')
@@ -71,23 +53,15 @@ const movieFieldValidationRules = (
         max: 100
       })
       .withMessage('Genres must be between 2 and 100 characters')
-      .matches(
-        /^[A-Za-z]+(?: [A-Za-z]+)*(?:, [A-Za-z]+(?: [A-Za-z]+)*)*$/
-      )
-      .withMessage(
-        'Genres must contain letters and be separated by commas'
-      ),
+      .matches(/^[A-Za-z]+(?: [A-Za-z]+)*(?:, [A-Za-z]+(?: [A-Za-z]+)*)*$/)
+      .withMessage('Genres must contain letters and be separated by commas'),
     field('runtime')
       .isString()
       .withMessage('Runtime must be a string')
       .trim()
       .matches(/^[0-9]+h\s+[0-5]?[0-9]m$/)
       .withMessage('Runtime must be in the format 1h 55m'),
-    body('imdbScore')
-      .optional()
-      .isFloat({ min: 0, max: 10 })
-      .withMessage('IMDB Score must be a number between 0 and 10')
-      .toFloat(),
+    body('imdbScore').optional().isFloat({ min: 0, max: 10 }).withMessage('IMDB Score must be a number between 0 and 10').toFloat(),
     body('rottenTomatoes')
       .optional()
       .isString()
@@ -116,21 +90,20 @@ const movieFieldValidationRules = (
         protocols: ['http', 'https']
       })
       .withMessage('Trailer must be a valid HTTP or HTTPS URL to an official trailer')
-  ];  
+  ];
 };
 
-export const movieTitleParamValidationRules = () => {
+export const movieTitleQueryValidationRules = () => {
   return [
-    param('title')
+    query('title')
+      .optional()
       .isString()
       .withMessage('Movie title must be a string')
       .trim()
       .notEmpty()
-      .withMessage('Movie title is required')
+      .withMessage('Movie title cannot be empty')
       .isLength({ max: 85 })
-      .withMessage(
-        'Movie title cannot exceed 85 characters'
-      )
+      .withMessage('Movie title cannot exceed 85 characters')
   ];
 };
 
@@ -141,4 +114,3 @@ export const movieValidationRules = () => {
 export const updateMovieValidationRules = () => {
   return movieFieldValidationRules(true);
 };
-
