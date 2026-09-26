@@ -2,9 +2,7 @@ import express from 'express';
 
 import { authMiddleware } from './middleware/auth.middleware';
 
-import {
-  connectToDatabase
-} from './services/database.services';
+import { connectToDatabase } from './services/database.services';
 import { seedSeats } from './services/seeds/seats.seed';
 
 import routes from './routes/index';
@@ -28,15 +26,10 @@ connectToDatabase()
     await seedSeats();
 
     app.listen(port, () => {
-      console.log(
-        `Server running on port ${port}`
-      );
+      console.log(`Server running on port ${port}`);
     });
   })
   .catch((error: unknown) => {
-    console.error(
-      'Failed to initialize applicaiton:',
-      error
-    );
+    console.error('Failed to initialize applicaiton:', error);
     process.exit(1);
   });

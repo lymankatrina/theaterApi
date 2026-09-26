@@ -5,5 +5,6 @@ export const COLLECTION_NAMES = {
   movies: getEnv('MOVIES_COLLECTION_NAME'),
   seats: getEnv('SEATS_COLLECTION_NAME'),
   showtimes: getEnv('SHOWTIMES_COLLECTION_NAME'),
-  tickets: getEnv('TICKETS_COLLECTION_NAME')
+  tickets: getEnv('TICKETS_COLLECTION_NAME'),
+  concessions: getEnv('CONCESSIONS_COLLECTION_NAME')
 } as const;

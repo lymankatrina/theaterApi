@@ -863,6 +863,239 @@
           }
         }
       }
+    },
+    "/concessions": {
+      "get": {
+        "tags": [
+          "Concessions"
+        ],
+        "summary": "Get active concessions",
+        "description": "Returns all active concessions. An optional search query can be used to search by name or description.",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "description": "Search active concessions by name or description",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "example": "popcorn"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Active concessions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Concession"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid search query"
+          },
+          "500": {
+            "description": "Error getting concessions"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Concessions"
+        ],
+        "summary": "Create a concession",
+        "description": "Creates a new concession. Administrative access is required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConcessionInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Concession created successfully"
+          },
+          "400": {
+            "description": "Invalid concession data"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "409": {
+            "description": "A concession with this name already exists"
+          },
+          "422": {
+            "description": "Validation error"
+          },
+          "500": {
+            "description": "Unable to create concession"
+          }
+        }
+      }
+    },
+    "/concessions/admin": {
+      "get": {
+        "tags": [
+          "Concessions"
+        ],
+        "summary": "Get all concessions",
+        "description": "Returns all active and inactive concessions. Administrative access is required. An optional search query can be used to search by name, description, or exact concession ID",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "description": "Search concessions by name, description, or exact concession ID",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "example": "popcorn"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Concessions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Concession"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "422": {
+            "description": "Invalid search query"
+          },
+          "500": {
+            "description": "Error getting all concessions"
+          }
+        }
+      }
+    },
+    "/concessions/{concessionId}": {
+      "get": {
+        "tags": [
+          "Concessions"
+        ],
+        "summary": "Get active concession by its ID.",
+        "description": "Returns an active concession by its ID.",
+        "parameters": [
+          {
+            "name": "concessionId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of the concession",
+            "schema": {
+              "type": "string",
+              "format": "objectId",
+              "example": "68d5f28a2d9c123456789abc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Concession retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Concession"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Active concession not found"
+          },
+          "422": {
+            "description": "Concession ID must be a valid ObjectId"
+          },
+          "500": {
+            "description": "Error getting concession"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Concessions"
+        ],
+        "summary": "Update a concession",
+        "description": "Updates a concession. Requires administrative access.",
+        "parameters": [
+          {
+            "name": "concessionId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of the concession",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "66c8e0d1f0a123456789abcd"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConcessionInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Concession updated successfully or is already up to date"
+          },
+          "400": {
+            "description": "Invalid request or no concession update fields provided"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Requires Administrative Access"
+          },
+          "404": {
+            "description": "Concession not found"
+          },
+          "409": {
+            "description": "Name already in use"
+          },
+          "422": {
+            "description": "Concession ID parameter not valid"
+          },
+          "500": {
+            "description": "Failed to update concession"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1259,6 +1492,121 @@
             "type": "string",
             "format": "date-time",
             "example": "2026-09-23T17:30:00.000Z"
+          }
+        }
+      },
+      "Concession": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "format": "objectId",
+            "example": "68d5f28a2d9c123456789abc"
+          },
+          "name": {
+            "type": "string",
+            "example": "Large Popcorn"
+          },
+          "description": {
+            "type": "string",
+            "example": "Freshly popped buttery popcorn"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "popcorn",
+              "drink",
+              "candy",
+              "food",
+              "other"
+            ],
+            "example": "popcorn"
+          },
+          "priceInCents": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 700
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "CreateConcessionInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "category",
+          "priceInCents",
+          "isActive"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 50,
+            "example": "Large Popcorn"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 200,
+            "example": "Freshly popped buttery popcorn"
+          },
+          "category": {
+            "enum": [
+              "popcorn",
+              "drink",
+              "candy",
+              "food",
+              "other"
+            ],
+            "example": "popcorn"
+          },
+          "priceInCents": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 700
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "UpdateConcessionInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 50,
+            "example": "Large Popcorn"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 200,
+            "example": "Freshly popped buttery popcorn"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "popcorn",
+              "drink",
+              "candy",
+              "food",
+              "other"
+            ],
+            "example": "popcorn"
+          },
+          "priceInCents": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 750
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
           }
         }
       }
