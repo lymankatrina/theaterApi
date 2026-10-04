@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { ObjectId, MongoServerError } from 'mongodb';
 import { matchedData } from 'express-validator';
+import { ObjectId, MongoServerError } from 'mongodb';
 
 import { collections } from '../services/database.services';
 import { generateTicketsForShowtime } from '../services/tickets.services';

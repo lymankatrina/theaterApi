@@ -6,5 +6,7 @@ export const COLLECTION_NAMES = {
   seats: getEnv('SEATS_COLLECTION_NAME'),
   showtimes: getEnv('SHOWTIMES_COLLECTION_NAME'),
   tickets: getEnv('TICKETS_COLLECTION_NAME'),
-  concessions: getEnv('CONCESSIONS_COLLECTION_NAME')
+  concessions: getEnv('CONCESSIONS_COLLECTION_NAME'),
+  prices: getEnv('PRICES_COLLECTION_NAME'),
+  carts: getEnv('CARTS_COLLECTION_NAME')
 } as const;

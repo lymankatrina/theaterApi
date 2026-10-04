@@ -1096,6 +1096,169 @@
           }
         }
       }
+    },
+    "/prices": {
+      "get": {
+        "tags": [
+          "Prices"
+        ],
+        "summary": "Get all prices",
+        "description": "Returns all prices in order of admission type.",
+        "responses": {
+          "200": {
+            "description": "Prices retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Price"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Prices"
+        ],
+        "summary": "Create a new price",
+        "description": "Creates a new price. Administrative access required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePriceInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Price created successfully"
+          },
+          "400": {
+            "description": "Invalid price data"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "409": {
+            "description": "A price with this admission type already exists"
+          },
+          "422": {
+            "description": "Validation error"
+          },
+          "500": {
+            "description": "Unable to create price"
+          }
+        }
+      }
+    },
+    "/prices/{priceId}": {
+      "get": {
+        "tags": [
+          "Prices"
+        ],
+        "summary": "Get price by ID",
+        "description": "Returns one price by price ID.",
+        "parameters": [
+          {
+            "name": "priceId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of the price",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "6ab43f8cc9819c4743d6203c"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Price retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Price"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Price not found"
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Error retrieving price by ID"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Prices"
+        ],
+        "summary": "Update a price",
+        "description": "Updates a price. Requires administrative access.",
+        "parameters": [
+          {
+            "name": "priceId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of the price",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "66c8e0d1f0a123456789abcd"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePriceInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Price updated successfully or is already up to date"
+          },
+          "400": {
+            "description": "Invalid request or no price update fields provided"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Requires Administrative Access"
+          },
+          "404": {
+            "description": "Price not found"
+          },
+          "409": {
+            "description": "Admission Type already in use"
+          },
+          "422": {
+            "description": "Price ID parameter not valid"
+          },
+          "500": {
+            "description": "Failed to update price"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1607,6 +1770,75 @@
           "isActive": {
             "type": "boolean",
             "example": true
+          }
+        }
+      },
+      "Price": {
+        "type": "object",
+        "required": [
+          "_id",
+          "admissionType",
+          "priceInCents"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "format": "objectId",
+            "example": "66c8e0d1f0a123456789abcd"
+          },
+          "admissionType": {
+            "type": "string",
+            "enum": [
+              "adult",
+              "child",
+              "student",
+              "military",
+              "senior"
+            ],
+            "example": "adult"
+          },
+          "priceInCents": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 1000
+          }
+        }
+      },
+      "CreatePriceInput": {
+        "type": "object",
+        "required": [
+          "admissionType",
+          "priceInCents"
+        ],
+        "properties": {
+          "admissionType": {
+            "type": "string",
+            "enum": [
+              "adult",
+              "child",
+              "student",
+              "military",
+              "senior"
+            ],
+            "example": "adult"
+          },
+          "priceInCents": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 1000
+          }
+        }
+      },
+      "UpdatePriceInput": {
+        "type": "object",
+        "required": [
+          "priceInCents"
+        ],
+        "properties": {
+          "priceInCents": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 1000
           }
         }
       }

@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { ObjectId, MongoServerError } from 'mongodb';
 import { matchedData } from 'express-validator';
+import { ObjectId, MongoServerError } from 'mongodb';
 
 import { collections, mongoClient } from '../services/database.services';
 import { generateTicketsForShowtime } from '../services/tickets.services';
-import type { Showtime } from '../models/showtimes.model';
 import type { CreateShowtimeInput } from '../dto/showtimes.dto';
+import type { Showtime } from '../models/showtimes.model';
 
 import { getDatesBetween } from '../helpers/helpers';
 

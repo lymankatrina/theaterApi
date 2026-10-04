@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
 import { matchedData } from 'express-validator';
+import { ObjectId } from 'mongodb';
 
-import type { Movie } from '../models/movies.model';
 import type { CreateMovieInput, UpdateMovieInput } from '../dto/movies.dto';
+import type { Movie } from '../models/movies.model';
 
 import { collections, mongoClient } from '../services/database.services';
 

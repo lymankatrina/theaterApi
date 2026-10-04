@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { MongoServerError, ObjectId } from 'mongodb';
 import { matchedData } from 'express-validator';
+import { MongoServerError, ObjectId } from 'mongodb';
 
-import type { Concession } from '../models/concessions.model';
 import type { CreateConcessionInput, UpdateConcessionInput } from '../dto/concessions.dto';
+import type { Concession } from '../models/concessions.model';
 
 import { collections } from '../services/database.services';
 
