@@ -10,10 +10,10 @@ import type {
   UpdateConcessionQuantityInput
 } from '../dto/carts.dto';
 
-import type { CartTicketItem } from '../types/cart.types';
+import type { CartTicketItem, CartConcessionItem } from '../types/cart.types';
 
 import type { Cart } from '../models/carts.model';
-import { ownsCart } from '../services/carts.services';
+import { ownsCart, getCartExpiration, getCartActivityUpdate } from '../services/carts.services';
 import { collections, mongoClient } from '../services/database.services';
 
 export class CartsController {
@@ -58,8 +58,8 @@ export class CartsController {
     try {
       const user = req.currentUser;
       if (!user || !user._id) {
-        res.status(404).json({
-          message: 'User not found'
+        res.status(403).json({
+          message: 'Access denied'
         });
         return;
       }
@@ -183,7 +183,8 @@ export class CartsController {
                 ticketItems: cartTicketItem
               },
               $set: {
-                updatedAt: new Date()
+                updatedAt: new Date(),
+                expiresAt: getCartExpiration()
               }
             },
             {
@@ -228,54 +229,413 @@ export class CartsController {
       });
       return;
     }
-    const cart = await collections.carts.findOne({
-      _id: new ObjectId(cartId),
-      status: 'active'
-    });
-    if (!cart) {
-      res.status(404).json({
-        message: 'Active cart not found'
+    try {
+      const cart = await collections.carts.findOne({
+        _id: new ObjectId(cartId),
+        status: 'active'
       });
-      return;
+      if (!cart) {
+        res.status(404).json({
+          message: 'Active cart not found'
+        });
+        return;
+      }
+      const userOwnsCart = ownsCart(cart, user._id);
+      if (!userOwnsCart && user.role !== 'admin') {
+        res.status(403).json({
+          message: 'Access denied'
+        });
+        return;
+      }
+      const price = await collections.prices.findOne({
+        admissionType: data.admissionType
+      });
+      if (!price) {
+        res.status(404).json({
+          message: 'Price not found for admission type'
+        });
+        return;
+      }
+      const result = await collections.carts.updateOne(
+        {
+          _id: new ObjectId(cartId),
+          status: 'active',
+          'ticketItems.ticketId': new ObjectId(ticketId)
+        },
+        {
+          $set: {
+            'ticketItems.$.admissionType': data.admissionType,
+            'ticketItems.$.priceInCents': price.priceInCents,
+            updatedAt: new Date(),
+            expiresAt: getCartExpiration()
+          }
+        }
+      );
+      if (result.matchedCount === 0) {
+        res.status(404).json({
+          message: 'Ticket not found in cart'
+        });
+        return;
+      }
+      res.status(200).json({
+        message: 'Successfully updated ticket in cart'
+      });
+    } catch (error) {
+      console.error('Error updating ticket in cart:', error);
+      res.status(500).json({
+        message: 'Unable to update ticket in cart'
+      });
     }
-    const userOwnsCart = ownsCart(cart, user._id);
-    if (!userOwnsCart && user.role !== 'admin') {
+  };
+
+  removeTicketFromCart = async (req: Request, res: Response): Promise<void> => {
+    const { cartId, ticketId } = matchedData(req, {
+      locations: ['params']
+    });
+    const user = req.currentUser;
+    if (!user || !user._id) {
       res.status(403).json({
         message: 'Access denied'
       });
       return;
     }
-    const price = await collections.prices.findOne({
-      admissionType: data.admissionType
+    try {
+      const cart = await collections.carts.findOne({
+        _id: new ObjectId(cartId),
+        status: 'active'
+      });
+      if (!cart) {
+        res.status(404).json({
+          message: 'Active cart not found'
+        });
+        return;
+      }
+      const userOwnsCart = ownsCart(cart, user._id);
+      if (!userOwnsCart && user.role !== 'admin') {
+        res.status(403).json({
+          message: 'Access denied'
+        });
+        return;
+      }
+      const ticketObjectId = new ObjectId(ticketId);
+      const ticketInCart = cart.ticketItems.some((item) => item.ticketId.equals(ticketObjectId));
+      if (!ticketInCart) {
+        res.status(404).json({
+          message: 'Ticket not found in cart'
+        });
+        return;
+      }
+      const isLastTicket = cart.ticketItems.length === 1;
+      const session = mongoClient.startSession();
+      try {
+        await session.withTransaction(async () => {
+          let cartResult;
+          if (isLastTicket) {
+            cartResult = await collections.carts.updateOne(
+              {
+                _id: new ObjectId(cartId),
+                status: 'active'
+              },
+              {
+                $pull: {
+                  ticketItems: {
+                    ticketId: ticketObjectId
+                  }
+                },
+                $set: {
+                  updatedAt: new Date()
+                },
+                $unset: {
+                  expiresAt: ''
+                }
+              },
+              {
+                session
+              }
+            );
+          } else {
+            cartResult = await collections.carts.updateOne(
+              {
+                _id: new ObjectId(cartId),
+                status: 'active'
+              },
+              {
+                $pull: {
+                  ticketItems: {
+                    ticketId: ticketObjectId
+                  }
+                },
+                $set: {
+                  updatedAt: new Date(),
+                  expiresAt: getCartExpiration()
+                }
+              },
+              {
+                session
+              }
+            );
+          }
+          if (cartResult.modifiedCount === 0) {
+            throw new Error('Unable to remove ticket from cart');
+          }
+          const ticketResult = await collections.tickets.updateOne(
+            {
+              _id: ticketObjectId,
+              status: 'reserved'
+            },
+            {
+              $set: {
+                status: 'available'
+              }
+            },
+            {
+              session
+            }
+          );
+          if (ticketResult.modifiedCount === 0) {
+            throw new Error('Unable to release ticket');
+          }
+        });
+      } finally {
+        await session.endSession();
+      }
+      res.status(200).json({
+        message: 'Successfully removed ticket from cart'
+      });
+    } catch (error) {
+      console.error('Error removing ticket from cart:', error);
+      res.status(500).json({
+        message: 'Unable to remove ticket from cart'
+      });
+    }
+  };
+
+  addConcessionToCart = async (req: Request, res: Response): Promise<void> => {
+    const { cartId } = matchedData(req, {
+      locations: ['params']
     });
-    if (!price) {
-      res.status(404).json({
-        message: 'Price not found for admission type'
+    const data = matchedData(req, {
+      locations: ['body']
+    }) as AddConcessionToCartInput;
+    const user = req.currentUser;
+    if (!user || !user._id) {
+      res.status(403).json({
+        message: 'Access denied'
       });
       return;
     }
-    const result = await collections.carts.updateOne(
-      {
+    try {
+      const cart = await collections.carts.findOne({
         _id: new ObjectId(cartId),
-        status: 'active',
-        'ticketItems.ticketId': new ObjectId(ticketId)
-      },
-      {
-        $set: {
-          'ticketItems.$.admissionType': data.admissionType,
-          'ticketItems.$.priceInCents': price.priceInCents,
-          updatedAt: new Date()
+        status: 'active'
+      });
+      if (!cart) {
+        res.status(404).json({
+          message: 'Active cart not found'
+        });
+        return;
+      }
+      const userOwnsCart = ownsCart(cart, user._id);
+      if (!userOwnsCart && user.role !== 'admin') {
+        res.status(403).json({
+          message: 'Access denied'
+        });
+        return;
+      }
+      const concessionObjectId = new ObjectId(data.concessionId);
+      const concession = await collections.concessions.findOne({
+        _id: concessionObjectId,
+        isActive: true
+      });
+      if (!concession) {
+        res.status(404).json({
+          message: 'Active concession not found'
+        });
+        return;
+      }
+      const concessionInCart = cart.concessionItems.some((item) => item.concessionId.equals(concessionObjectId));
+      const hasTickets = cart.ticketItems.length > 0;
+      if (concessionInCart) {
+        const result = await collections.carts.updateOne(
+          {
+            _id: new ObjectId(cartId),
+            status: 'active',
+            'concessionItems.concessionId': concessionObjectId
+          },
+          {
+            $inc: {
+              'concessionItems.$.quantity': data.quantity
+            },
+            $set: {
+              'concessionItems.$.priceInCents': concession.priceInCents,
+              ...getCartActivityUpdate(hasTickets)
+            }
+          }
+        );
+        if (result.modifiedCount === 0) {
+          throw new Error('Unable to update concession in cart');
+        }
+      } else {
+        const cartConcessionItem: CartConcessionItem = {
+          concessionId: concessionObjectId,
+          quantity: data.quantity,
+          priceInCents: concession.priceInCents
+        };
+        const result = await collections.carts.updateOne(
+          {
+            _id: new ObjectId(cartId),
+            status: 'active'
+          },
+          {
+            $push: {
+              concessionItems: cartConcessionItem
+            },
+            $set: {
+              ...getCartActivityUpdate(hasTickets)
+            }
+          }
+        );
+        if (result.modifiedCount === 0) {
+          throw new Error('Unable to add concession to cart');
         }
       }
-    );
-    if (result.matchedCount === 0) {
-      res.status(404).json({
-        message: 'Ticket not found in cart'
+      res.status(200).json({
+        message: 'Successfully added concession to cart'
+      });
+    } catch (error) {
+      console.error('Error adding concession to cart:', error);
+      res.status(500).json({
+        message: 'Unable to add concession to cart'
+      });
+    }
+  };
+
+  updateConcessionQuantity = async (req: Request, res: Response): Promise<void> => {
+    const { cartId, concessionId } = matchedData(req, {
+      locations: ['params']
+    });
+    const data = matchedData(req, {
+      locations: ['body']
+    }) as UpdateConcessionQuantityInput;
+    const user = req.currentUser;
+    if (!user || !user._id) {
+      res.status(403).json({
+        message: 'Access denied'
       });
       return;
     }
-    res.status(200).json({
-      message: 'Successfully updated ticket in cart'
+    try {
+      const cart = await collections.carts.findOne({
+        _id: new ObjectId(cartId),
+        status: 'active'
+      });
+      if (!cart) {
+        res.status(404).json({
+          message: 'Active cart not found'
+        });
+        return;
+      }
+      const userOwnsCart = ownsCart(cart, user._id);
+      if (!userOwnsCart && user.role !== 'admin') {
+        res.status(403).json({
+          message: 'Access denied'
+        });
+        return;
+      }
+      const concessionObjectId = new ObjectId(concessionId);
+      const hasTickets = cart.ticketItems.length > 0;
+      const result = await collections.carts.updateOne(
+        {
+          _id: new ObjectId(cartId),
+          status: 'active',
+          'concessionItems.concessionId': concessionObjectId
+        },
+        {
+          $set: {
+            'concessionItems.$.quantity': data.quantity,
+            ...getCartActivityUpdate(hasTickets)
+          }
+        }
+      );
+      if (result.matchedCount === 0) {
+        res.status(404).json({
+          message: 'Concession not found in cart'
+        });
+        return;
+      }
+      res.status(200).json({
+        message: 'Successfully updated concession quantity'
+      });
+    } catch (error) {
+      console.error('Error updating concession quantity:', error);
+      res.status(500).json({
+        message: 'Unable to update concession quantity'
+      });
+    }
+  };
+
+  removeConcessionFromCart = async (req: Request, res: Response): Promise<void> => {
+    const { cartId, concessionId } = matchedData(req, {
+      locations: ['params']
     });
+    const user = req.currentUser;
+    if (!user || !user._id) {
+      res.status(403).json({
+        message: 'Access denied'
+      });
+      return;
+    }
+    try {
+      const cart = await collections.carts.findOne({
+        _id: new ObjectId(cartId),
+        status: 'active'
+      });
+      if (!cart) {
+        res.status(404).json({
+          message: 'Active cart not found'
+        });
+        return;
+      }
+      const userOwnsCart = ownsCart(cart, user._id);
+      if (!userOwnsCart && user.role !== 'admin') {
+        res.status(403).json({
+          message: 'Access denied'
+        });
+        return;
+      }
+      const concessionObjectId = new ObjectId(concessionId);
+      const hasTickets = cart.ticketItems.length > 0;
+      const cartResult = await collections.carts.updateOne(
+        {
+          _id: new ObjectId(cartId),
+          status: 'active',
+          'concessionItems.concessionId': concessionObjectId
+        },
+        {
+          $pull: {
+            concessionItems: {
+              concessionId: concessionObjectId
+            }
+          },
+          $set: {
+            ...getCartActivityUpdate(hasTickets)
+          }
+        }
+      );
+      if (cartResult.matchedCount === 0) {
+        res.status(404).json({
+          message: 'Concession not found in cart'
+        });
+        return;
+      }
+      res.status(200).json({
+        message: 'Successfully removed concession item from cart'
+      });
+    } catch (error) {
+      console.error('Error removing concession from cart:', error);
+      res.status(500).json({
+        message: 'Unable to remove concession from cart'
+      });
+    }
   };
 }

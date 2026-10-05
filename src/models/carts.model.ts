@@ -9,6 +9,7 @@ export interface Cart {
   salesChannel: SalesChannel;
   createdAt: Date;
   updatedAt: Date;
+  expiresAt?: Date;
   _id?: ObjectId;
   userId?: ObjectId;
   employeeId?: ObjectId;

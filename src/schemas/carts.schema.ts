@@ -75,6 +75,10 @@ export const applySchemaValidation = async (db: Db): Promise<void> => {
         bsonType: 'date',
         description: 'Date stamp when cart is updated is required'
       },
+      expiresAt: {
+        bsonType: 'date',
+        description: 'Date stamp when cart expires'
+      },
       userId: {
         bsonType: 'objectId',
         description: 'User ID is the mongoDB ObjectId of the authenticated user and is required if the sales channel is online'
