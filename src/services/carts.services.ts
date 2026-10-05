@@ -55,6 +55,9 @@ export const processExpiredCarts = async (): Promise<void> => {
             session
           }
         );
+        if (ticketResult.modifiedCount !== ticketIds.length) {
+          throw new Error('Unable to release all tickets from expired cart');
+        }
         const cartResult = await collections.carts.updateOne(
           {
             _id: cart._id,
@@ -73,7 +76,12 @@ export const processExpiredCarts = async (): Promise<void> => {
             session
           }
         );
+        if (cartResult.modifiedCount === 0) {
+          throw new Error('Unable to abandon expired cart');
+        }
       });
+    } catch (error) {
+      console.error(`Error processing expired cart ${cart._id}:`, error);
     } finally {
       await session.endSession();
     }
