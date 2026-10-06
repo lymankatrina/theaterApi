@@ -34,7 +34,7 @@ export const ticketIdParamValidationRules = () => {
   return [param('ticketId').isMongoId().withMessage('Ticket ID must be a valid MongoDB ObjectId')];
 };
 
-export const addConcessionValidaitonRules = () => {
+export const addConcessionValidationRules = () => {
   return [
     body('concessionId').isMongoId().withMessage('Concession ID must be a valid MongoDB ObjectId'),
     body('quantity').isInt({ min: 1 }).withMessage('Quantity must be an integer of at least 1')

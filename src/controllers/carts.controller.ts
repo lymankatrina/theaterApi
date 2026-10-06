@@ -13,7 +13,7 @@ import type {
 import type { CartTicketItem, CartConcessionItem } from '../types/cart.types';
 
 import type { Cart } from '../models/carts.model';
-import { ownsCart, getCartExpiration, getCartActivityUpdate } from '../services/carts.services';
+import { ownsCart, getCartExpiration, getCartActivityUpdate, removeAbandonedCarts } from '../services/carts.services';
 import { collections, mongoClient } from '../services/database.services';
 
 export class CartsController {
@@ -86,6 +86,7 @@ export class CartsController {
       } else {
         newCart.employeeId = user._id;
       }
+      await removeAbandonedCarts(user._id, data.salesChannel);
       const result = await collections.carts.insertOne(newCart);
       res.status(201).json({
         message: 'Successfully created a new cart',

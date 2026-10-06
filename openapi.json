@@ -1259,6 +1259,606 @@
           }
         }
       }
+    },
+    "/carts/{cartId}": {
+      "get": {
+        "tags": [
+          "Carts"
+        ],
+        "summary": "Get cart by ID",
+        "description": "Returns a cart by cart ID. The authenticated user must own the cart or be an administrator.",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of a cart",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "6ab43f8cc9819c4743d6203c"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "User is not authorized to get this cart"
+          },
+          "404": {
+            "description": "Cart not found"
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Error retrieving cart by ID"
+          }
+        }
+      }
+    },
+    "/carts": {
+      "post": {
+        "tags": [
+          "Carts"
+        ],
+        "summary": "Create a cart",
+        "description": "Creates a new active cart for the authenticated user. Customers may only create online carts.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "salesChannel"
+                ],
+                "properties": {
+                  "salesChannel": {
+                    "type": "string",
+                    "enum": [
+                      "online",
+                      "ticket-window",
+                      "concession-stand"
+                    ],
+                    "example": "online"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cart created successfully",
+            "content": {
+              "apllication/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully created a new cart"
+                    },
+                    "cartId": {
+                      "type": "string",
+                      "format": "objectId",
+                      "example": "6ab43f8cc9819c4743d6203c"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "User is not authorized to create the requested cart"
+          },
+          "409": {
+            "description": "An active cart already exists"
+          },
+          "422": {
+            "description": "Invalid request data"
+          },
+          "500": {
+            "description": "Unable to create cart"
+          }
+        }
+      }
+    },
+    "/carts/{cartId}/tickets": {
+      "post": {
+        "tags": [
+          "Carts"
+        ],
+        "summary": "Add a ticket to a cart",
+        "description": "Adds an available ticket to an active cart and reserves the ticket. The authenticated user must own the cart or be an administrator.",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of a cart",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "6ab43f8cc9819c4743d6203c"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "ticketId",
+                  "admissionType"
+                ],
+                "properties": {
+                  "ticketId": {
+                    "type": "string",
+                    "pattern": "^[a-fA-F0-9]{24}$",
+                    "example": "6ab43f8cc9819c4743d6203c"
+                  },
+                  "admissionType": {
+                    "type": "string",
+                    "enum": [
+                      "adult",
+                      "child",
+                      "student",
+                      "military",
+                      "senior"
+                    ],
+                    "example": "adult"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ticket added to cart successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully added ticket to cart"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Active cart, ticket, or price not found"
+          },
+          "409": {
+            "description": "Ticket not available"
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Unable to add ticket to cart"
+          }
+        }
+      }
+    },
+    "/carts/{cartId}/tickets/{ticketId}": {
+      "put": {
+        "tags": [
+          "Carts"
+        ],
+        "summary": "Update a ticket's admission type",
+        "description": "Updates the admission type of a ticket in an active cart. The authenticated user must own the cart or be an administrator.",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of a cart",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "6ab43f8cc9819c4743d6203c"
+            }
+          },
+          {
+            "name": "ticketId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of a ticket",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "6ab43f8cc9819c4743d6203c"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "admissionType"
+                ],
+                "properties": {
+                  "admissionType": {
+                    "type": "string",
+                    "enum": [
+                      "adult",
+                      "child",
+                      "student",
+                      "military",
+                      "senior"
+                    ],
+                    "example": "adult"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ticket successfully updated in cart",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully updated ticket in cart"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Active cart, ticket, or price not found"
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Unable to update ticket in cart"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Carts"
+        ],
+        "summary": "Remove a ticket from a cart",
+        "description": "Remove a reserved ticket from an active cart and returns the ticket to available status. The authenticated user must own the cart or be an administrator.",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of a cart",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "66c8e0d1f0a123456789abcd"
+            }
+          },
+          {
+            "name": "ticketId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of a ticket",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "66c8e0d1f0a123456789abcd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully removed ticket from cart",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully removed ticket from cart"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Active cart or ticket not found"
+          },
+          "409": {
+            "description": "Unable to release ticket"
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Unable to remove ticket from cart"
+          }
+        }
+      }
+    },
+    "/carts/{cartId}/concessions": {
+      "post": {
+        "tags": [
+          "Carts"
+        ],
+        "summary": "Add a concession to a cart",
+        "description": "Adds a concession to an active cart. If the concession is already in the cart, its quantity is increased. The authenticated user must own the cart or be an administrator.",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of a cart",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "6ab43f8cc9819c4743d6203c"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "concessionId",
+                  "quantity"
+                ],
+                "properties": {
+                  "concessionId": {
+                    "type": "string",
+                    "pattern": "^[a-fA-F0-9]{24}$",
+                    "example": "6ab43f8cc9819c4743d6203c"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 2
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Concession added to cart successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully added concession to cart"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Active cart or concession not found"
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Unable to add concession to cart"
+          }
+        }
+      }
+    },
+    "/carts/{cartId}/concessions/{concessionId}": {
+      "put": {
+        "tags": [
+          "Carts"
+        ],
+        "summary": "Update a concession's quantity",
+        "description": "Updates the quantity of a concession in an active cart. The authenticated user must own the cart or be an administrator.",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of a cart",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "6ab43f8cc9819c4743d6203c"
+            }
+          },
+          {
+            "name": "concessionId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of a concession",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "6ab43f8cc9819c4743d6203c"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "quantity"
+                ],
+                "properties": {
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 2
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Concession in cart successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully updated concession in cart"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Active cart or concession not found"
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Unable to update concession in cart"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Carts"
+        ],
+        "summary": "Remove a concession from a cart",
+        "description": "Remove a concession from an active cart. The authenticated user must own the cart or be an administrator.",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of a cart",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "66c8e0d1f0a123456789abcd"
+            }
+          },
+          {
+            "name": "concessionId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of a concession",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "example": "66c8e0d1f0a123456789abcd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully removed concession from cart",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully removed concession from cart"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Active cart or concession not found"
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Unable to remove concession from cart"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1839,6 +2439,134 @@
             "type": "integer",
             "minimum": 0,
             "example": 1000
+          }
+        }
+      },
+      "CartTicketItem": {
+        "type": "object",
+        "required": [
+          "ticketId",
+          "admissionType",
+          "priceInCents"
+        ],
+        "properties": {
+          "ticketId": {
+            "type": "string",
+            "format": "objectId",
+            "example": "66c8e0d1f0a123456789abcd"
+          },
+          "admissionType": {
+            "type": "string",
+            "enum": [
+              "adult",
+              "child",
+              "student",
+              "military",
+              "senior"
+            ],
+            "example": "adult"
+          },
+          "priceInCents": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 1000
+          }
+        }
+      },
+      "CartConcessionItem": {
+        "type": "object",
+        "required": [
+          "concessionId",
+          "quantity",
+          "priceInCents"
+        ],
+        "properties": {
+          "concessionId": {
+            "type": "string",
+            "format": "objectId",
+            "example": "66c8e0d1f0a123456789abcd"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 2
+          },
+          "priceInCents": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 500
+          }
+        }
+      },
+      "Cart": {
+        "type": "object",
+        "required": [
+          "_id",
+          "ticketItems",
+          "concessionItems",
+          "status",
+          "salesChannel",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "format": "objectId",
+            "example": "66c8e0d1f0a123456789abcd"
+          },
+          "userId": {
+            "type": "string",
+            "format": "objectId",
+            "example": "66c8e0d1f0a123456789abcd"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "objectId",
+            "example": "66c8e0d1f0a123456789abcd"
+          },
+          "ticketItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartTicketItem"
+            }
+          },
+          "concessionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartConcessionItem"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "completed",
+              "abandoned"
+            ],
+            "example": "active"
+          },
+          "salesChannel": {
+            "type": "string",
+            "enum": [
+              "online",
+              "ticket-window",
+              "concession-stand"
+            ],
+            "example": "online"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration time for a cart holding reserved tickets"
           }
         }
       }

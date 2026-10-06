@@ -1,7 +1,8 @@
-import type { ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import type { Cart } from '../models/carts.model';
 import { collections } from './database.services';
 import { mongoClient } from './database.services';
+import { SalesChannel } from '../types/cart.types';
 
 export const ownsCart = (cart: Cart, userId: ObjectId): boolean => {
   return cart.userId?.equals(userId) || cart.employeeId?.equals(userId) || false;
@@ -86,4 +87,20 @@ export const processExpiredCarts = async (): Promise<void> => {
       await session.endSession();
     }
   }
+};
+
+export const removeAbandonedCarts = async (ownerId: ObjectId, salesChannel: SalesChannel): Promise<void> => {
+  if (salesChannel === 'online') {
+    await collections.carts.deleteMany({
+      userId: ownerId,
+      salesChannel,
+      status: 'abandoned'
+    });
+    return;
+  }
+  await collections.carts.deleteMany({
+    employeeId: ownerId,
+    salesChannel,
+    status: 'abandoned'
+  });
 };
