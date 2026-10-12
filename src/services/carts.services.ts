@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import type { Cart } from '../models/carts.model';
 import { collections } from './database.services';
 import { mongoClient } from './database.services';
-import { SalesChannel } from '../types/cart.types';
+import { SalesChannel } from '../types/salesChannels.types';
 
 export const ownsCart = (cart: Cart, userId: ObjectId): boolean => {
   return cart.userId?.equals(userId) || cart.employeeId?.equals(userId) || false;

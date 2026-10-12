@@ -1,7 +1,7 @@
 import { body, param } from 'express-validator';
 
 import { ADMISSION_TYPES } from '../../types/prices.types';
-import { SALES_CHANNELS } from '../../types/cart.types';
+import { SALES_CHANNELS } from '../../types/salesChannels.types';
 
 export const cartParamValidationRules = () => {
   return [param('cartId').isMongoId().withMessage('Cart ID must be a valid ObjectId')];

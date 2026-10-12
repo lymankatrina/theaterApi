@@ -1,26 +1,12 @@
-import * as mongoDB from 'mongodb';
 import type { Db } from 'mongodb';
 import { MOVIE_CERTIFICATIONS } from '../types/movies.types';
 import { COLLECTION_NAMES } from '../config/collectionNames';
+import { applySchemaValidator } from './schemaValidator';
 
-export async function applySchemaValidation(
-  db: Db
-): Promise<void> {
+export async function applySchemaValidation(db: Db): Promise<void> {
   const jsonSchema = {
     bsonType: 'object',
-    required: [
-      '_id', 
-      'title', 
-      'tagLine', 
-      'overview', 
-      'year', 
-      'certification', 
-      'releaseDate', 
-      'genres', 
-      'runtime', 
-      'poster', 
-      'trailer'
-    ],
+    required: ['_id', 'title', 'tagLine', 'overview', 'year', 'certification', 'releaseDate', 'genres', 'runtime', 'poster', 'trailer'],
     additionalProperties: false,
     properties: {
       _id: {
@@ -81,7 +67,7 @@ export async function applySchemaValidation(
         description: 'Trailer must be a url to an official trailer'
       },
       imdbScore: {
-        bsonType: ['double', 'int' ],
+        bsonType: ['double', 'int'],
         minimum: 0,
         maximum: 10,
         description: 'IMDB score should be a number between 0 and 10'
@@ -99,28 +85,5 @@ export async function applySchemaValidation(
     }
   };
 
-  const collectionName = COLLECTION_NAMES.movies;
-
-  const validator = { 
-    $jsonSchema: jsonSchema 
-  };
-
-  try {
-    await db.command({
-      collMod: collectionName,
-      validator
-    });
-  } catch (error) {
-    if (
-      error instanceof mongoDB.MongoServerError &&
-      error.codeName === 'NamespaceNotFound'
-    ) {
-      await db.createCollection(
-        collectionName,
-        { validator }
-      );
-    } else {
-      throw error;
-    }
-  }
+  await applySchemaValidator(db, COLLECTION_NAMES.movies, jsonSchema);
 }

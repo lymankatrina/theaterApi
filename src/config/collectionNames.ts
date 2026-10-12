@@ -8,5 +8,6 @@ export const COLLECTION_NAMES = {
   tickets: getEnv('TICKETS_COLLECTION_NAME'),
   concessions: getEnv('CONCESSIONS_COLLECTION_NAME'),
   prices: getEnv('PRICES_COLLECTION_NAME'),
-  carts: getEnv('CARTS_COLLECTION_NAME')
+  carts: getEnv('CARTS_COLLECTION_NAME'),
+  orders: getEnv('ORDERS_COLLECTION_NAME')
 } as const;

@@ -11,6 +11,7 @@ import { applySchemaValidation as applyTicketSchemaValidation } from '../schemas
 import { applySchemaValidation as applyConcessionSchemaValidation } from '../schemas/concessions.schema';
 import { applySchemaValidation as applyPricesSchemaValidation } from '../schemas/prices.schema';
 import { applySchemaValidation as applyCartSchemaValidation } from '../schemas/carts.schema';
+import { applySchemaValidation as applyOrderSchemaValidation } from '../schemas/orders.schema';
 
 import type { User } from '../models/users.model';
 import type { Movie } from '../models/movies.model';
@@ -20,6 +21,7 @@ import type { Ticket } from '../models/tickets.model';
 import type { Concession } from '../models/concessions.model';
 import type { Price } from '../models/prices.model';
 import type { Cart } from '../models/carts.model';
+import type { Order } from '../models/orders.model';
 
 export let mongoClient: mongoDB.MongoClient;
 export let database: mongoDB.Db;
@@ -33,6 +35,7 @@ export const collections = {} as {
   concessions: mongoDB.Collection<Concession>;
   prices: mongoDB.Collection<Price>;
   carts: mongoDB.Collection<Cart>;
+  orders: mongoDB.Collection<Order>;
 };
 
 export const connectToDatabase = async (): Promise<void> => {
@@ -50,6 +53,7 @@ export const connectToDatabase = async (): Promise<void> => {
   await applyConcessionSchemaValidation(database);
   await applyPricesSchemaValidation(database);
   await applyCartSchemaValidation(database);
+  await applyOrderSchemaValidation(database);
 
   collections.users = database.collection<User>(COLLECTION_NAMES.users);
   collections.movies = database.collection<Movie>(COLLECTION_NAMES.movies);
@@ -59,6 +63,7 @@ export const connectToDatabase = async (): Promise<void> => {
   collections.concessions = database.collection<Concession>(COLLECTION_NAMES.concessions);
   collections.prices = database.collection<Price>(COLLECTION_NAMES.prices);
   collections.carts = database.collection<Cart>(COLLECTION_NAMES.carts);
+  collections.orders = database.collection<Order>(COLLECTION_NAMES.orders);
 
   await collections.seats.createIndex(
     {
@@ -112,6 +117,8 @@ export const connectToDatabase = async (): Promise<void> => {
       }
     }
   );
+
+  await collections.orders.createIndex({ cartId: 1 }, { unique: true });
 
   console.log(`Successfully connected to database: ${database.databaseName}`);
 };

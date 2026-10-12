@@ -1,23 +1,13 @@
-import { MongoServerError } from 'mongodb';
 import type { Db } from 'mongodb';
 
 import { COLLECTION_NAMES } from '../config/collectionNames';
 import { USER_ROLES } from '../types/users.types';
+import { applySchemaValidator } from './schemaValidator';
 
-export async function applySchemaValidation(
-  db: Db
-): Promise<void> {
+export async function applySchemaValidation(db: Db): Promise<void> {
   const jsonSchema = {
     bsonType: 'object',
-    required: [
-      '_id', 
-      'auth0Id',
-      'firstName', 
-      'lastName',
-      'userName', 
-      'email', 
-      'role'
-    ],
+    required: ['_id', 'auth0Id', 'firstName', 'lastName', 'userName', 'email', 'role'],
     additionalProperties: false,
     properties: {
       _id: {
@@ -62,37 +52,5 @@ export async function applySchemaValidation(
     }
   };
 
-    const collectionName = 
-      COLLECTION_NAMES.users;
-  
-    const validator = {
-      $jsonSchema: jsonSchema
-    };
-
-    try {
-      await db.command({
-        collMod: collectionName,
-        validator
-      });
-    } catch (error) {
-      if (
-        error instanceof MongoServerError &&
-        error.codeName === 'NamespaceNotFound'
-      ){
-        await db.createCollection(
-          collectionName,
-          { validator }
-        );
-      } else {  
-      throw error;
-    }
-  }
-  await db.collection(collectionName).createIndex(
-    { auth0Id: 1 },
-    { unique: true }
-  );
-  await db.collection(collectionName).createIndex(
-    { email: 1 },
-    { unique: true }
-  );
+  await applySchemaValidator(db, COLLECTION_NAMES.users, jsonSchema);
 }

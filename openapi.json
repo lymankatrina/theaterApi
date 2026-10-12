@@ -2290,6 +2290,14 @@
             "minimum": 0,
             "example": 700
           },
+          "taxType": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "grocery"
+            ],
+            "example": "standard"
+          },
           "isActive": {
             "type": "boolean",
             "example": true
@@ -2302,6 +2310,7 @@
           "name",
           "category",
           "priceInCents",
+          "taxType",
           "isActive"
         ],
         "properties": {
@@ -2330,6 +2339,13 @@
             "type": "integer",
             "minimum": 0,
             "example": 700
+          },
+          "taxType": {
+            "enum": [
+              "standard",
+              "grocery"
+            ],
+            "example": "standard"
           },
           "isActive": {
             "type": "boolean",
@@ -2366,6 +2382,14 @@
             "type": "integer",
             "minimum": 0,
             "example": 750
+          },
+          "taxType": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "grocery"
+            ],
+            "example": "standard"
           },
           "isActive": {
             "type": "boolean",

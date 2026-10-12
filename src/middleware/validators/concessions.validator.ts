@@ -1,6 +1,7 @@
 import { body, param, query } from 'express-validator';
 
 import { CONCESSION_CATEGORIES } from '../../types/concessions.types';
+import { TAX_TYPES } from '../../types/tax.types';
 
 export const concessionsQueryValidationRules = () => {
   return [
@@ -48,6 +49,13 @@ const concessionFieldValidationRules = (isUpdate = false) => {
       .isIn([...CONCESSION_CATEGORIES])
       .withMessage('Concession category must be valid'),
     field('priceInCents').isInt({ min: 0 }).withMessage('Price in cents must be a non negative integer'),
+    field('taxType')
+      .isString()
+      .withMessage('Tax type must be a string')
+      .bail()
+      .toLowerCase()
+      .isIn([...TAX_TYPES])
+      .withMessage('Tax type must be a valid'),
     field('isActive').isBoolean().withMessage('isActive must be true or false')
   ];
 };

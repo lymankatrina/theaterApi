@@ -1,5 +1,5 @@
 import type { AdmissionType } from '../types/prices.types';
-import type { SalesChannel } from '../types/cart.types';
+import type { SalesChannel } from '../types/salesChannels.types';
 
 export interface CreateCartInput {
   salesChannel: SalesChannel;

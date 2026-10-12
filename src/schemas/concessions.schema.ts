@@ -1,13 +1,14 @@
-import * as mongoDB from 'mongodb';
 import type { Db } from 'mongodb';
 
 import { COLLECTION_NAMES } from '../config/collectionNames';
 import { CONCESSION_CATEGORIES } from '../types/concessions.types';
+import { TAX_TYPES } from '../types/tax.types';
+import { applySchemaValidator } from './schemaValidator';
 
 export const applySchemaValidation = async (db: Db): Promise<void> => {
   const jsonSchema = {
     bsonType: 'object',
-    required: ['_id', 'name', 'category', 'priceInCents', 'isActive'],
+    required: ['_id', 'name', 'category', 'priceInCents', 'taxType', 'isActive'],
     additionalProperties: false,
     properties: {
       _id: {
@@ -31,26 +32,17 @@ export const applySchemaValidation = async (db: Db): Promise<void> => {
         minimum: 0,
         description: 'Price must be a non-negative integer in cents'
       },
+      taxType: {
+        bsonType: 'string',
+        enum: TAX_TYPES,
+        description: 'Must be a valid tax type'
+      },
       isActive: {
         bsonType: 'bool',
         description: 'Identifies if the item is active or discontinued'
       }
     }
   };
-  const collectionName = COLLECTION_NAMES.concessions;
-  const validator = {
-    $jsonSchema: jsonSchema
-  };
-  try {
-    await db.command({
-      collMod: collectionName,
-      validator
-    });
-  } catch (error) {
-    if (error instanceof mongoDB.MongoServerError && error.codeName === 'NamespaceNotFound') {
-      await db.createCollection(collectionName, { validator });
-    } else {
-      throw error;
-    }
-  }
+
+  await applySchemaValidator(db, COLLECTION_NAMES.concessions, jsonSchema);
 };

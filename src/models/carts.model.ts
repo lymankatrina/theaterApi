@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 
-import type { CartTicketItem, CartConcessionItem, CartStatus, SalesChannel } from '../types/cart.types';
+import type { CartTicketItem, CartConcessionItem, CartStatus } from '../types/cart.types';
+import type { SalesChannel } from '../types/salesChannels.types';
 
 export interface Cart {
   ticketItems: CartTicketItem[];
