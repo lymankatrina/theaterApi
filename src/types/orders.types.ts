@@ -2,7 +2,7 @@ import type { ObjectId } from 'mongodb';
 import type { SectionType } from './seats.types';
 import type { AdmissionType } from './prices.types';
 
-export const ORDER_STATUSES = ['created', 'paid'] as const;
+export const ORDER_STATUSES = ['cancelled', 'created', 'paid'] as const;
 
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 

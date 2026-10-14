@@ -3,6 +3,7 @@ import type { Cart } from '../models/carts.model';
 import { collections } from './database.services';
 import { mongoClient } from './database.services';
 import { SalesChannel } from '../types/salesChannels.types';
+import type { Order } from '../models/orders.model';
 
 export const ownsCart = (cart: Cart, userId: ObjectId): boolean => {
   return cart.userId?.equals(userId) || cart.employeeId?.equals(userId) || false;
@@ -29,7 +30,9 @@ export const processExpiredCarts = async (): Promise<void> => {
   const now = new Date();
   const expiredCarts = await collections.carts
     .find({
-      status: 'active',
+      status: {
+        $in: ['active', 'checkout']
+      },
       expiresAt: {
         $lte: now
       }
@@ -59,10 +62,30 @@ export const processExpiredCarts = async (): Promise<void> => {
         if (ticketResult.modifiedCount !== ticketIds.length) {
           throw new Error('Unable to release all tickets from expired cart');
         }
+        if (cart.status === 'checkout') {
+          const orderResult = await collections.orders.updateOne(
+            {
+              cartId: cart._id,
+              orderStatus: 'created'
+            },
+            {
+              $set: {
+                orderStatus: 'cancelled'
+              }
+            },
+            { session }
+          );
+          if (orderResult.modifiedCount !== 1) {
+            throw new Error('Unable to cancel order for expired checkout');
+          }
+        }
+
         const cartResult = await collections.carts.updateOne(
           {
             _id: cart._id,
-            status: 'active'
+            status: {
+              $in: ['active', 'checkout']
+            }
           },
           {
             $set: {
@@ -77,7 +100,7 @@ export const processExpiredCarts = async (): Promise<void> => {
             session
           }
         );
-        if (cartResult.modifiedCount === 0) {
+        if (cartResult.modifiedCount !== 1) {
           throw new Error('Unable to abandon expired cart');
         }
       });

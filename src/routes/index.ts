@@ -9,6 +9,7 @@ import { ticketsRouter } from './tickets.route';
 import { concessionRouter } from './concessions.route';
 import { priceRouter } from './prices.route';
 import { cartRouter } from './carts.route';
+import { orderRouter } from './orders.route';
 import { swaggerRouter } from './swagger.route';
 
 const routes = Router();
@@ -21,6 +22,7 @@ routes.use('/tickets', ticketsRouter);
 routes.use('/concessions', concessionRouter);
 routes.use('/prices', priceRouter);
 routes.use('/carts', cartRouter);
+routes.use('/orders', orderRouter);
 routes.use('/', swaggerRouter);
 
 export default routes;

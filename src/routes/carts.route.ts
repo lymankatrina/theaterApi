@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { CartsController } from '../controllers/carts.controller';
 
 import { requiresAuth } from 'express-openid-connect';
-import { validUserOrAdmin } from '../middleware/permissions.middleware';
+import { validUser } from '../middleware/permissions.middleware';
 import { validate } from '../middleware/validators/validate';
 
 import {
@@ -20,22 +20,24 @@ export const cartRouter = Router();
 
 const controller = new CartsController();
 
-cartRouter.get('/:cartId', requiresAuth(), validUserOrAdmin, cartParamValidationRules(), validate, controller.getCartById);
-cartRouter.post('/', requiresAuth(), validUserOrAdmin, createCartValidationRules(), validate, controller.createCart);
+cartRouter.get('/:cartId', requiresAuth(), validUser, cartParamValidationRules(), validate, controller.getCartById);
+
+cartRouter.post('/', requiresAuth(), validUser, createCartValidationRules(), validate, controller.createCart);
 
 cartRouter.post(
   '/:cartId/tickets',
   requiresAuth(),
-  validUserOrAdmin,
+  validUser,
   cartParamValidationRules(),
   addTicketValidationRules(),
   validate,
   controller.addTicketToCart
 );
+
 cartRouter.put(
   '/:cartId/tickets/:ticketId',
   requiresAuth(),
-  validUserOrAdmin,
+  validUser,
   cartParamValidationRules(),
   ticketIdParamValidationRules(),
   updateTicketValidationRules(),
@@ -46,7 +48,7 @@ cartRouter.put(
 cartRouter.delete(
   '/:cartId/tickets/:ticketId',
   requiresAuth(),
-  validUserOrAdmin,
+  validUser,
   cartParamValidationRules(),
   ticketIdParamValidationRules(),
   validate,
@@ -56,26 +58,28 @@ cartRouter.delete(
 cartRouter.post(
   '/:cartId/concessions',
   requiresAuth(),
-  validUserOrAdmin,
+  validUser,
   cartParamValidationRules(),
   addConcessionValidationRules(),
   validate,
   controller.addConcessionToCart
 );
+
 cartRouter.put(
   '/:cartId/concessions/:concessionId',
   requiresAuth(),
-  validUserOrAdmin,
+  validUser,
   cartParamValidationRules(),
   concessionIdParamValidationRules(),
   updateConcessionQuantityValidationRules(),
   validate,
   controller.updateConcessionQuantity
 );
+
 cartRouter.delete(
   '/:cartId/concessions/:concessionId',
   requiresAuth(),
-  validUserOrAdmin,
+  validUser,
   cartParamValidationRules(),
   concessionIdParamValidationRules(),
   validate,

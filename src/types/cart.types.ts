@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 
 import type { AdmissionType } from './prices.types';
 
-export const CART_STATUSES = ['active', 'completed', 'abandoned'] as const;
+export const CART_STATUSES = ['active', 'checkout', 'completed', 'abandoned'] as const;
 
 export type CartStatus = (typeof CART_STATUSES)[number];
 
