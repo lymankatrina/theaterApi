@@ -58,6 +58,9 @@ export const completePayment = async (input: CompletePaymentInput, user: User): 
   if (verification.paymentId !== input.paymentId) {
     throw new AppError('Payment ID does not match', 409);
   }
+  if (verification.orderReference !== order._id.toString()) {
+    throw new AppError('Payment does not belong to this order', 409);
+  }
   const session = mongoClient.startSession();
   try {
     let completedOrder: Order | undefined;

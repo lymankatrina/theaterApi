@@ -11,4 +11,5 @@ export interface PaymentVerification {
   paymentProvider: PaymentProvider;
   status: PaymentStatus;
   amountInCents: number;
+  orderReference: string | undefined;
 }

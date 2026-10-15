@@ -16,12 +16,11 @@ const createTestPayment = async () => {
     sourceId: 'cnon:card-nonce-ok',
     idempotencyKey: randomUUID(),
     amountMoney: {
-      amount: BigInt(2989),
+      amount: BigInt(3630),
       currency: 'USD'
-    }
+    },
+    referenceId: '6ad11f5fb72a1613999b49ba'
   });
-
-  console.log(response.payment);
 
   const paymentId = response.payment?.id;
 

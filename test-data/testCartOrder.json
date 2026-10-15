@@ -1,0 +1,83 @@
+{
+  "cart": {
+    "_id": "6ad11cecb72a1613999b49b9",
+    "ticketItems": [
+      {
+        "ticketId": "6ab4e2a8086521fb6b4e7a7b",
+        "admissionType": "adult",
+        "priceInCents": 800
+      },
+      {
+        "ticketId": "6ab4e2a8086521fb6b4e7a8f",
+        "admissionType": "child",
+        "priceInCents": 600
+      }
+    ],
+    "concessionItems": [
+      {
+        "concessionId": "6ac6a7043d319c9eeb9ef396",
+        "quantity": 2,
+        "priceInCents": 1000
+      }
+    ],
+    "status": "active",
+    "salesChannel": "online",
+    "createdAt": "2026-10-15T18:35:24.011Z",
+    "updatedAt": "2026-10-15T18:44:44.206Z",
+    "userId": "6aa9cd6edab08df8ea3db67e",
+    "expiresAt": "2026-10-15T18:59:44.206Z"
+  },
+  "order": {
+    "cartId": "6ad11cecb72a1613999b49b9",
+    "ticketItems": [
+      {
+        "ticketId": "6ab4e2a8086521fb6b4e7a7b",
+        "showtimeId": "6ab4e2a8086521fb6b4e7a4f",
+        "seatId": "6ab30733f49493b38ac0c3ab",
+        "movieTitle": "The Fall Guy",
+        "showDate": "2026-07-10",
+        "showTime": "7:00 PM",
+        "section": "left",
+        "row": 13,
+        "seat": 1,
+        "admissionType": "adult",
+        "priceInCents": 800,
+        "taxRate": 0.0675,
+        "taxInCents": 54
+      },
+      {
+        "ticketId": "6ab4e2a8086521fb6b4e7a8f",
+        "showtimeId": "6ab4e2a8086521fb6b4e7a4f",
+        "seatId": "6ab30733f49493b38ac0c3bf",
+        "movieTitle": "The Fall Guy",
+        "showDate": "2026-07-10",
+        "showTime": "7:00 PM",
+        "section": "left",
+        "row": 19,
+        "seat": 3,
+        "admissionType": "child",
+        "priceInCents": 600,
+        "taxRate": 0.0675,
+        "taxInCents": 41
+      }
+    ],
+    "concessionItems": [
+      {
+        "concessionId": "6ac6a7043d319c9eeb9ef396",
+        "name": "Large Popcorn",
+        "quantity": 2,
+        "priceInCents": 1000,
+        "taxRate": 0.0675,
+        "taxInCents": 135
+      }
+    ],
+    "subtotalInCents": 3400,
+    "taxInCents": 230,
+    "totalInCents": 3630,
+    "salesChannel": "online",
+    "orderStatus": "created",
+    "createdAt": "2026-10-15T18:45:51.201Z",
+    "userId": "6aa9cd6edab08df8ea3db67e",
+    "_id": "6ad11f5fb72a1613999b49ba"
+  }
+}

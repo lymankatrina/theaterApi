@@ -49,7 +49,8 @@ export class SquarePaymentService implements PaymentProviderService {
       paymentId: payment.id,
       paymentProvider: 'square',
       status,
-      amountInCents
+      amountInCents,
+      orderReference: payment.referenceId
     };
   }
 }
