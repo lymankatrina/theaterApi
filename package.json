@@ -24,6 +24,7 @@
     "express-openid-connect": "^3.4.0",
     "express-validator": "^7.3.2",
     "mongodb": "^7.6.0",
+    "square": "^46.0.0",
     "swagger-ui-express": "^5.0.1"
   }
 }

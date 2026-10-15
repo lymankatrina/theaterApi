@@ -174,9 +174,13 @@ export const applySchemaValidation = async (db: Db): Promise<void> => {
         description:
           'Employee ID is the mongoDB ObjectId of the authenticated employee and is required if the sales channel is ticket-window or concession-stand'
       },
-      squarePaymentId: {
+      paymentProvider: {
         bsonType: 'string',
-        description: 'Square payment ID associated with the completed payment'
+        description: 'Payment providers name'
+      },
+      paymentId: {
+        bsonType: 'string',
+        description: 'Payment ID associated with the completed payment'
       }
     }
   };

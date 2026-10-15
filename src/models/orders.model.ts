@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 
 import { SalesChannel } from '../types/salesChannels.types';
 import { OrderTicketItem, OrderConcessionItem, OrderStatus } from '../types/orders.types';
+import { PaymentProvider } from '../types/payments.types';
 
 export interface Order {
   userId?: ObjectId;
@@ -14,7 +15,8 @@ export interface Order {
   totalInCents: number;
   salesChannel: SalesChannel;
   orderStatus: OrderStatus;
-  squarePaymentId?: string;
+  paymentProvider?: PaymentProvider;
+  paymentId?: string;
   createdAt: Date;
   _id?: ObjectId;
 }

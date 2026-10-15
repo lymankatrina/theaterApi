@@ -120,5 +120,13 @@ export const connectToDatabase = async (): Promise<void> => {
 
   await collections.orders.createIndex({ cartId: 1 }, { unique: true });
 
+  await collections.orders.createIndex(
+    { paymentId: 1 },
+    {
+      unique: true,
+      sparse: true
+    }
+  );
+
   console.log(`Successfully connected to database: ${database.databaseName}`);
 };

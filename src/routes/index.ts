@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { userRouter } from '../routes/users.route';
+import { userRouter } from './users.route';
 
 import { movieRouter } from './movies.route';
 import { seatsRouter } from './seats.route';
@@ -10,6 +10,7 @@ import { concessionRouter } from './concessions.route';
 import { priceRouter } from './prices.route';
 import { cartRouter } from './carts.route';
 import { orderRouter } from './orders.route';
+import { paymentRouter } from './payments.route';
 import { swaggerRouter } from './swagger.route';
 
 const routes = Router();
@@ -23,6 +24,7 @@ routes.use('/concessions', concessionRouter);
 routes.use('/prices', priceRouter);
 routes.use('/carts', cartRouter);
 routes.use('/orders', orderRouter);
+routes.use('/payments', paymentRouter);
 routes.use('/', swaggerRouter);
 
 export default routes;

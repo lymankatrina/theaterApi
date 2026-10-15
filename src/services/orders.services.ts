@@ -8,6 +8,10 @@ import type { CartConcessionItem, CartTicketItem } from '../types/cart.types';
 import type { OrderConcessionItem, OrderTicketItem } from '../types/orders.types';
 import { TAX_RATES } from '../types/tax.types';
 
+export const ownsOrder = (order: Order, userId: ObjectId): boolean => {
+  return order.userId?.equals(userId) || order.employeeId?.equals(userId) || false;
+};
+
 const buildOrderTicketItem = async (cartItem: CartTicketItem, session: ClientSession): Promise<OrderTicketItem> => {
   const ticket = await collections.tickets.findOne(
     {
