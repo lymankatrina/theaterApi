@@ -13,8 +13,10 @@ import type {
 import type { CartTicketItem, CartConcessionItem } from '../types/cart.types';
 
 import type { Cart } from '../models/carts.model';
-import { ownsCart, getCartExpiration, getCartActivityUpdate, removeAbandonedCarts } from '../services/carts.services';
+import { ownsCart, getCartActivityUpdate, removeAbandonedCarts } from '../services/carts.services';
 import { collections, mongoClient } from '../services/database.services';
+import { AppError } from '../errors/app.error';
+import { getCartExpiration } from '../helpers/helpers';
 
 export class CartsController {
   getCartById = async (req: Request, res: Response): Promise<void> => {
@@ -167,7 +169,7 @@ export class CartsController {
             }
           );
           if (!reservedTicket) {
-            throw new Error('Ticket is not available');
+            throw new AppError('Ticket is not available', 409);
           }
           const cartTicketItem: CartTicketItem = {
             ticketId,
@@ -203,9 +205,9 @@ export class CartsController {
         message: 'Successfully added ticket to cart'
       });
     } catch (error) {
-      if (error instanceof Error && error.message === 'Ticket is not available') {
-        res.status(409).json({
-          message: 'Ticket is not available'
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          message: error.message
         });
         return;
       }

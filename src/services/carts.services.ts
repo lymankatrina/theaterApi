@@ -1,18 +1,12 @@
 import { ObjectId } from 'mongodb';
+
+import { collections, mongoClient } from './database.services';
+import { getCartExpiration } from '../helpers/helpers';
 import type { Cart } from '../models/carts.model';
-import { collections } from './database.services';
-import { mongoClient } from './database.services';
-import { SalesChannel } from '../types/salesChannels.types';
-import type { Order } from '../models/orders.model';
+import type { SalesChannel } from '../types/salesChannels.types';
 
 export const ownsCart = (cart: Cart, userId: ObjectId): boolean => {
   return cart.userId?.equals(userId) || cart.employeeId?.equals(userId) || false;
-};
-
-const CART_EXPIRATION_MINUTES = 15;
-
-export const getCartExpiration = (): Date => {
-  return new Date(Date.now() + CART_EXPIRATION_MINUTES * 60 * 1000);
 };
 
 export const getCartActivityUpdate = (hasTickets: boolean) => {

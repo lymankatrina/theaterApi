@@ -7,6 +7,8 @@ import type { Order } from '../models/orders.model';
 import type { CartConcessionItem, CartTicketItem } from '../types/cart.types';
 import type { OrderConcessionItem, OrderTicketItem } from '../types/orders.types';
 import { TAX_RATES } from '../types/tax.types';
+import { AppError } from '../errors/app.error';
+import { getCartExpiration } from '../helpers/helpers';
 
 export const ownsOrder = (order: Order, userId: ObjectId): boolean => {
   return order.userId?.equals(userId) || order.employeeId?.equals(userId) || false;
@@ -20,10 +22,10 @@ const buildOrderTicketItem = async (cartItem: CartTicketItem, session: ClientSes
     { session }
   );
   if (!ticket) {
-    throw new Error('Ticket not found');
+    throw new AppError('Ticket not found', 404);
   }
   if (ticket.status !== 'reserved') {
-    throw new Error('Ticket is no longer reserved');
+    throw new AppError('Ticket is no longer reserved', 409);
   }
   const showtime = await collections.showtimes.findOne(
     {
@@ -32,7 +34,7 @@ const buildOrderTicketItem = async (cartItem: CartTicketItem, session: ClientSes
     { session }
   );
   if (!showtime) {
-    throw new Error('Showtime not found');
+    throw new AppError('Showtime not found', 404);
   }
   const movie = await collections.movies.findOne(
     {
@@ -41,7 +43,7 @@ const buildOrderTicketItem = async (cartItem: CartTicketItem, session: ClientSes
     { session }
   );
   if (!movie) {
-    throw new Error('Movie not found');
+    throw new AppError('Movie not found', 404);
   }
   const seat = await collections.seats.findOne(
     {
@@ -50,7 +52,7 @@ const buildOrderTicketItem = async (cartItem: CartTicketItem, session: ClientSes
     { session }
   );
   if (!seat) {
-    throw new Error('Seat not found');
+    throw new AppError('Seat not found', 404);
   }
   const taxRate = TAX_RATES.standard;
   const taxInCents = Math.round(cartItem.priceInCents * taxRate);
@@ -79,7 +81,7 @@ const buildOrderConcessionItem = async (cartItem: CartConcessionItem, session: C
     { session }
   );
   if (!concessionItem) {
-    throw new Error('Concession Item not found');
+    throw new AppError('Concession item not found', 404);
   }
   const taxRate = TAX_RATES[concessionItem.taxType];
   const taxInCents = Math.round(cartItem.priceInCents * cartItem.quantity * taxRate);
@@ -95,7 +97,7 @@ const buildOrderConcessionItem = async (cartItem: CartConcessionItem, session: C
 
 export const createOrder = async (cartId: string, user: User): Promise<Order> => {
   if (!user._id) {
-    throw new Error('User ID is required');
+    throw new AppError('User ID is required', 401);
   }
   const userId = user._id;
   const session = mongoClient.startSession();
@@ -109,16 +111,16 @@ export const createOrder = async (cartId: string, user: User): Promise<Order> =>
         { session }
       );
       if (!cart) {
-        throw new Error('Cart not found');
+        throw new AppError('Cart not found', 404);
       }
       if (!ownsCart(cart, userId) && user.role !== 'admin') {
-        throw new Error('Access denied');
+        throw new AppError('Access denied', 403);
       }
       if (cart.status !== 'active') {
-        throw new Error('Cart is not active');
+        throw new AppError('Cart is not active', 409);
       }
       if (cart.ticketItems.length === 0 && cart.concessionItems.length === 0) {
-        throw new Error('Cart is empty');
+        throw new AppError('Cart is empty', 409);
       }
       const ticketItems: OrderTicketItem[] = [];
       for (const cartItem of cart.ticketItems) {
@@ -156,7 +158,7 @@ export const createOrder = async (cartId: string, user: User): Promise<Order> =>
       }
       const result = await collections.orders.insertOne(newOrder, { session });
       const now = new Date();
-      const checkoutExpiresAt = new Date(now.getTime() + 15 * 60 * 1000);
+      const checkoutExpiresAt = getCartExpiration();
       const cartUpdateResult = await collections.carts.updateOne(
         {
           _id: cart._id,

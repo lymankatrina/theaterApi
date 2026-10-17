@@ -128,5 +128,7 @@ export const connectToDatabase = async (): Promise<void> => {
     }
   );
 
+  await collections.prices.createIndex({ admissionType: 1 }, { unique: true });
+
   console.log(`Successfully connected to database: ${database.databaseName}`);
 };

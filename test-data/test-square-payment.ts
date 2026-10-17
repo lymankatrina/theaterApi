@@ -1,13 +1,10 @@
 import { randomUUID } from 'node:crypto';
-import { SquareClient, SquareEnvironment } from 'square';
+import { SquareClient } from 'square';
 
-import { getEnv } from '../src/config/env';
+import { squareConfig } from '../src/config/square.config';
 import { SquarePaymentService } from '../src/services/payments/square-payment.service';
 
-const squareClient = new SquareClient({
-  token: getEnv('SQUARE_ACCESS_TOKEN'),
-  environment: SquareEnvironment.Sandbox
-});
+const squareClient = new SquareClient(squareConfig);
 
 const squarePaymentService = new SquarePaymentService();
 

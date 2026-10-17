@@ -4,7 +4,8 @@
   "description": "San Juan Theater Rebuild",
   "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts"
@@ -16,7 +17,8 @@
     "@types/node": "^26.5.1",
     "@types/swagger-ui-express": "^4.1.8",
     "tsx": "^4.23.13",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
   },
   "dependencies": {
     "dotenv": "^17.4.2",

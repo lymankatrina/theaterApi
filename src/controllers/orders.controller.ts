@@ -6,6 +6,7 @@ import type { CreateOrderInput } from '../dto/orders.dto';
 
 import { collections } from '../services/database.services';
 import { createOrder } from '../services/orders.services';
+import { AppError } from '../errors/app.error';
 
 export class OrdersController {
   getOrderById = async (req: Request, res: Response): Promise<void> => {
@@ -25,7 +26,7 @@ export class OrdersController {
       });
       if (!order) {
         res.status(404).json({
-          message: 'order not found'
+          message: 'Order not found'
         });
         return;
       }
@@ -58,6 +59,12 @@ export class OrdersController {
       const order = await createOrder(data.cartId, user);
       res.status(201).json(order);
     } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          message: error.message
+        });
+        return;
+      }
       if (error instanceof MongoServerError && error.code === 11000) {
         res.status(409).json({
           message: 'An order already exists for this cart'

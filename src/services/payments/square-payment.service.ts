@@ -1,13 +1,10 @@
-import { SquareClient, SquareEnvironment } from 'square';
+import { SquareClient } from 'square';
+import { squareConfig } from '../../config/square.config';
 
 import type { PaymentProviderService } from './payment-provider.interface';
 import type { PaymentVerification } from '../../types/payments.types';
-import { getEnv } from '../../config/env';
 
-const squareClient = new SquareClient({
-  token: getEnv('SQUARE_ACCESS_TOKEN'),
-  environment: SquareEnvironment.Sandbox
-});
+const squareClient = new SquareClient(squareConfig);
 
 export class SquarePaymentService implements PaymentProviderService {
   async verifyPayment(paymentId: string): Promise<PaymentVerification> {
@@ -26,7 +23,11 @@ export class SquarePaymentService implements PaymentProviderService {
     }
 
     if (payment.amountMoney?.amount === undefined) {
-      throw new Error('Square payment amount is mission');
+      throw new Error('Square payment amount is missing');
+    }
+
+    if (!payment.amountMoney?.currency) {
+      throw new Error('Square payment currency is missing');
     }
 
     let status: PaymentVerification['status'];
@@ -50,6 +51,7 @@ export class SquarePaymentService implements PaymentProviderService {
       paymentProvider: 'square',
       status,
       amountInCents,
+      currency: payment.amountMoney.currency,
       orderReference: payment.referenceId
     };
   }

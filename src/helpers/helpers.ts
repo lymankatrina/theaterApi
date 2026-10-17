@@ -1,11 +1,3 @@
-export const getTodayDateString = (): string => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
 export const getDatesBetween = (startDate: string, endDate: string): string[] => {
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -15,4 +7,9 @@ export const getDatesBetween = (startDate: string, endDate: string): string[] =>
     dates.push(date.toISOString().split('T')[0]);
   }
   return dates;
+};
+
+const CART_EXPIRATION_MINUTES = 15;
+export const getCartExpiration = (): Date => {
+  return new Date(Date.now() + CART_EXPIRATION_MINUTES * 60 * 1000);
 };

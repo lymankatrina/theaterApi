@@ -61,6 +61,9 @@ export const completePayment = async (input: CompletePaymentInput, user: User): 
   if (verification.orderReference !== order._id.toString()) {
     throw new AppError('Payment does not belong to this order', 409);
   }
+  if (verification.currency !== 'USD') {
+    throw new AppError('Payment currency does not match order currency', 409);
+  }
   const session = mongoClient.startSession();
   try {
     let completedOrder: Order | undefined;
