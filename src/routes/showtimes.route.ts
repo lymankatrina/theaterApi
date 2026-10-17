@@ -16,6 +16,8 @@ export const showtimeRouter = express.Router();
 const controller = new ShowtimesController();
 
 showtimeRouter.get('/', movieIdQueryValidationRules(), validate, controller.getShowtimes);
+showtimeRouter.get('/nowPlaying', controller.getShowtimesNowPlaying);
+showtimeRouter.get('/comingSoon', controller.getShowtimesComingSoon);
 showtimeRouter.get('/:showtimeId', showtimeIdParamValidationRules(), validate, controller.getShowtimeById);
 showtimeRouter.post('/', requiresAuth(), validAdmin, showtimeValidationRules(), validate, controller.createShowtimes);
 showtimeRouter.delete('/:showtimeId', requiresAuth(), validAdmin, showtimeIdParamValidationRules(), validate, controller.deleteShowtime);

@@ -59,6 +59,116 @@ export class ShowtimesController {
     }
   };
 
+  getShowtimesNowPlaying = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const nowPlaying = await collections.showtimes
+        .aggregate([
+          {
+            $match: {
+              date: today
+            }
+          },
+          {
+            $lookup: {
+              from: collections.movies.collectionName,
+              localField: 'movieId',
+              foreignField: '_id',
+              as: 'movie'
+            }
+          },
+          {
+            $unwind: '$movie'
+          },
+          {
+            $group: {
+              _id: '$movie._id',
+              movie: {
+                $first: '$movie'
+              },
+              showtimes: {
+                $push: {
+                  _id: '$_id',
+                  date: '$date',
+                  time: '$time',
+                  showtimeType: '$showtimeType'
+                }
+              }
+            }
+          },
+          {
+            $sort: {
+              'movie.title': 1
+            }
+          }
+        ])
+        .toArray();
+      res.status(200).json(nowPlaying);
+    } catch (error) {
+      console.error('Error getting now playing movies:', error);
+      res.status(500).json({
+        message: 'Error getting movies now playing'
+      });
+    }
+  };
+
+  getShowtimesComingSoon = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const comingSoon = await collections.showtimes
+        .aggregate([
+          {
+            $match: {
+              date: {
+                $gte: today
+              }
+            }
+          },
+          {
+            $group: {
+              _id: '$movieId',
+              firstShowtimeDate: {
+                $min: '$date'
+              },
+              lastShowtimeDate: {
+                $max: '$date'
+              }
+            }
+          },
+          {
+            $match: {
+              firstShowtimeDate: {
+                $gt: today
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: collections.movies.collectionName,
+              localField: '_id',
+              foreignField: '_id',
+              as: 'movie'
+            }
+          },
+          {
+            $unwind: '$movie'
+          },
+          {
+            $sort: {
+              firstShowtimeDate: 1
+            }
+          }
+        ])
+        .toArray();
+      res.status(200).json(comingSoon);
+    } catch (error) {
+      console.error('Error getting coming soon movies:', error);
+      res.status(500).json({
+        message: 'Error getting coming soon movies'
+      });
+    }
+  };
+
   createShowtimes = async (req: Request, res: Response): Promise<void> => {
     const data = matchedData(req, {
       locations: ['body']
