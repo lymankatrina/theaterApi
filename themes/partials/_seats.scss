@@ -1,0 +1,129 @@
+.nowPlayingAvailableTicketsContainer {
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+}
+
+.seats-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.seat-section {
+  display: grid;
+  grid-auto-flow: row;
+  gap: 5px;
+}
+
+.seatsContainer {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  place-content: center;
+}
+
+.screen {
+  width: 100%;
+  margin-bottom: 10px;
+  grid-column: 1 / 4;
+  place-self: center;
+}
+
+.left-section {
+  grid-column: 1;
+  grid-template-rows: repeat(19, 30px);
+  grid-template-columns: repeat(3, 30px);
+}
+
+.center-section {
+  grid-column: 2;
+  grid-template-rows: repeat(15, 30px);
+  grid-template-columns: repeat(8, 30px);
+  margin: 0 20px;
+}
+
+.right-section {
+  grid-column: 3;
+  grid-template-rows: repeat(16, 30px);
+  grid-template-columns: repeat(3, 30px);
+}
+
+.seat {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.available {
+  background-color: blue;
+}
+
+.sold {
+  background-color: red;
+}
+
+.wheelchair {
+  background-color: green;
+  border: 2px dashed white;
+}
+
+.reserved {
+  background-color: darkgoldenrod; 
+}
+
+.unavailable {
+  background-color: gray;
+}
+.selected {
+  background-color: yellow;
+  border: 2px solid black;
+}
+
+.legend {
+  grid-column: 1 / 4;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+}
+
+.seatsLegendContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.legend-available {
+  background-color: blue;
+}
+
+.legend-wheelchair {
+  background-color: green;
+  border: 2px dashed white;
+}
+
+.legend-sold {
+  background-color: red;
+}
+
+.legend-reserved {
+  background-color: darkgoldenrod;
+}

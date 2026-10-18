@@ -16,13 +16,13 @@ const CART_EXPIRATION_CHECK_INTERVAL = 60 * 1000;
 
 app.use(express.json());
 app.use(authMiddleware);
-app.use('/', routes);
+app.use(express.static('public'));
 
 app.get('/', (_req, res) => {
-  res.status(200).json({
-    message: 'San Juan Theater API'
-  });
+  res.sendFile('home.html', { root: './public' });
 });
+
+app.use('/', routes);
 
 connectToDatabase()
   .then(async () => {

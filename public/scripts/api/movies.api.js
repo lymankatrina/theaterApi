@@ -1,19 +1,15 @@
-export const getNowPlaying = async () => {
-  const response = await fetch('/movies/nowPlaying');
-
+export const getMovies = async () => {
+  const response = await fetch('/movies');
   if (!response.ok) {
-    throw new Error('Unable to get now playing movies');
+    throw new Error('Unable to get movies');
   }
-
   return response.json();
 };
 
-export const getComingSoon = async () => {
-  const response = await fetch('/movies/comingsoon');
-
+export const getMovieById = async () => {
+  const response = await fetch(`/movies/${movieId}`);
   if (!response.ok) {
-    throw new Error('Unable to get coming soon movies');
+    throw new Error('Unable to get movie');
   }
-
   return response.json();
 };

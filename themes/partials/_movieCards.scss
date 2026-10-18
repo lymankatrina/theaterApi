@@ -1,0 +1,130 @@
+.movieCardsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.movie-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto auto auto auto auto auto auto auto auto auto;
+  padding: 1em;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  background-color: #fff;
+  overflow: hidden;
+  max-width: 350px;
+}
+
+.movie-card ._id,
+.movie-card .title,
+.movie-card .tagLine {
+  grid-column: 1 / -1;
+  font-weight: bold;
+}
+.movie-card ._id {
+  grid-row: 1;
+}
+.movie-card .title {
+  grid-row: 2;
+}
+.movie-card img {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+.movie-card .tagLine {
+  grid-row: 4;
+}
+.movie-card .year,
+.movie-card .releaseDate {
+  color: #555;
+}
+.movie-card .year {
+  grid-column: 1 / 5;
+  grid-row: 5;
+}
+.movie-card .releaseDate {
+  grid-column: 1 / 5;
+  grid-row: 6;
+}
+
+.movie-card .certification,
+.movie-card .runtime,
+.movie-card .genres {
+  color: #555;
+}
+
+.movie-card .certification {
+  grid-column: 1 / 5;
+  grid-row: 7;
+}
+.movie-card .runtime {
+  grid-column: 1 / 5;
+  grid-row: 8;
+}
+.movie-card .genres {
+  grid-column: 1 / 5;
+  grid-row: 9;
+}
+.movie-card .overview {
+  grid-column: 1 / -1;
+  grid-row: 10;
+  line-height: 1.5;
+  font-size: 14px;
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.movie-card .overview:hover {
+  white-space: normal;
+  overflow: visible;
+}
+
+.movie-card .imdbScore,
+.movie-card .rottenTomatoes,
+.movie-card .fandangoAudienceScore {
+  color: #555;
+}
+.movie-card .imdbScore {
+  grid-column: 1 / 5;
+  grid-row: 11;
+}
+.movie-card .rottenTomatoes {
+  grid-column: 1 / 5;
+  grid-row: 12;
+}
+.movie-card .fandangoAudienceScore {
+  grid-column: 1 / 5;
+  grid-row: 13;
+}
+
+.movie-card .trailer {
+  grid-column: 1 / 5;
+  grid-row: 14;
+}
+
+.movie-card p {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  text-align: left;
+  width: 100%;
+}
+
+.movie-card .showtimes {
+  grid-column: 1 / 5;
+  grid-row: 15;
+}

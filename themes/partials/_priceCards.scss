@@ -1,0 +1,47 @@
+.priceCardsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.price-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto auto auto auto auto auto auto auto auto auto;
+  padding: 1em;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  background-color: #fff;
+  overflow: hidden;
+  max-width: 350px;
+}
+
+.price-card .priceType {
+  grid-column: 1 / 5;
+  grid-row: 2;
+}
+
+.price-card .price {
+  grid-column: 1 / 5;
+  grid-row: 3;
+}
+
+.price-card ._id {
+  grid-column: 1 / -1;
+  font-weight: bold;
+  grid-row: 1;
+}
+
+.price-card p {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  text-align: left;
+  width: 100%;
+}
+

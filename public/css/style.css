@@ -1,50 +1,50 @@
 /* SCSS HEX */
 h1 {
-  font-family: 'urbane', sans-serif;
+  font-family: "urbane", sans-serif;
   font-weight: 700;
   font-style: normal;
   text-transform: uppercase;
 }
 
 h2 {
-  font-family: 'urbane', sans-serif;
+  font-family: "urbane", sans-serif;
   font-weight: 700;
   font-style: normal;
   text-transform: capitalize;
 }
 
 h3 {
-  font-family: 'urbane-rounded', sans-serif;
+  font-family: "urbane-rounded", sans-serif;
   font-weight: 500;
   font-style: normal;
 }
 
 h4 {
-  font-family: 'urbane', sans-serif;
+  font-family: "urbane", sans-serif;
   font-weight: 700;
   font-style: italic;
 }
 
 h5 {
-  font-family: 'obliqua', sans-serif;
+  font-family: "obliqua", sans-serif;
   font-weight: 700;
   font-style: italic;
 }
 
 h6 {
-  font-family: 'obliqua', sans-serif;
+  font-family: "obliqua", sans-serif;
   font-weight: 400;
   font-style: italic;
 }
 
 p {
-  font-family: 'obliqua', sans-serif;
+  font-family: "obliqua", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
 button {
-  font-family: 'urbane-rounded', sans-serif;
+  font-family: "urbane-rounded", sans-serif;
   font-weight: 300;
   font-style: normal;
 }
@@ -77,7 +77,7 @@ nav {
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: auto;
   place-content: center;
-  font-family: 'urbane-rounded', sans-serif;
+  font-family: "urbane-rounded", sans-serif;
   font-weight: 300;
   font-style: normal;
 }
@@ -110,7 +110,7 @@ footer {
   text-align: center;
   padding: 1em;
   border-radius: 0.25em;
-  font-family: 'obliqua', sans-serif;
+  font-family: "obliqua", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
@@ -228,9 +228,7 @@ footer {
   justify-content: center;
   opacity: 0;
   visibility: hidden;
-  transition:
-    opacity 0.3s,
-    visibiltiy 0.3s;
+  transition: opacity 0.3s, visibiltiy 0.3s;
 }
 
 .poster-container:hover .movie-trailer-container {
@@ -292,7 +290,7 @@ footer {
 
 label {
   margin-right: 1em;
-  font-family: 'urbane-rounded', sans-serif;
+  font-family: "urbane-rounded", sans-serif;
   font-weight: 500;
   font-style: normal;
 }
@@ -302,7 +300,7 @@ input {
   margin: 0.5em 0.5em;
 }
 
-input[type='url'] {
+input[type=url] {
   width: 100%;
 }
 
@@ -824,8 +822,7 @@ section.movies {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-#publicNewsMessage,
-#adminNewsMessage {
+#publicNewsMessage, #adminNewsMessage {
   margin-top: 20px;
   color: #908b8d;
   text-align: center;
@@ -896,14 +893,12 @@ section.movies {
   margin: 0 0 10px 0;
 }
 
-.event-dates,
-.event-time {
+.event-dates, .event-time {
   font-size: 0.9em;
   margin: 0 0 5px 0;
 }
 
-.event-dates strong,
-.event-time strong {
+.event-dates strong, .event-time strong {
   color: #009900;
 }
 

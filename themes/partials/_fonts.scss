@@ -1,0 +1,86 @@
+@mixin urbaneBold {
+  font-family: 'urbane', sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+@mixin urbaneBoldItalic {
+  font-family: 'urbane', sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+@mixin urbaneLight {
+  font-family: 'urbane', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+@mixin urbaneLightItalic {
+  font-family: 'urbane', sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+@mixin urbaneRoundedMedium {
+  font-family: 'urbane-rounded', sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+@mixin urbaneRoundedLight {
+  font-family: 'urbane-rounded', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+@mixin urbaneRoundedLightLarge {
+  font-family: 'urbane-rounded', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 3em;
+}
+@mixin obliqua {
+  font-family: 'obliqua', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+@mixin obliquaItalic {
+  font-family: 'obliqua', sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+@mixin obliquaBold {
+  font-family: 'obliqua', sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+@mixin obliquaBoldItalic {
+  font-family: 'obliqua', sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+h1 {
+  @include urbaneBold;
+  text-transform: uppercase;
+}
+h2 {
+  @include urbaneBold;
+  text-transform: capitalize;
+}
+h3 {
+  @include urbaneRoundedMedium;
+}
+h4 {
+  @include urbaneBoldItalic;
+}
+h5 {
+  @include obliquaBoldItalic;
+}
+h6 {
+  @include obliquaItalic;
+}
+p {
+  @include obliqua;
+}
+button {
+  @include urbaneRoundedLight;
+}

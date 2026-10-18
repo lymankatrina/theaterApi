@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>San Juan Theater | Home Page</title>
+    <meta name="description" content="Home Page for San Juan Theater" />
+    <link rel="stylesheet" href="https://use.typekit.net/vem8cxz.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://kit.fontawesome.com/db6c0dda2a.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+    <main>
+      <div class="headings">
+        <section class="events">
+          <div id="currentPublicEventsContainer"></div>
+          <div id="currentPublicEventsMessage"></div>
+        </section>
+
+        <section class="surveys">
+          <div id="activeSurveysContainer"></div>
+          <div id="activeSurveysMessage"></div>
+        </section>
+        <section>
+          <h1>Movies</h1>
+          <section class="nowPlayingContainer">
+            <h2>Now Playing</h2>
+            <div id="nowPlayingContainer"></div>
+          </section>
+
+          <section class="comingSoonContainer">
+            <h2>Coming Soon</h2>
+            <div id="comingSoonContainer"></div>
+          </section>
+        </section>
+      </div>
+    </main>
+    <div id="footer-placeholder"></div>
+    <script src="/scripts/headers/headerFunction.js"></script>
+    <script src="/scripts/footerFunction.js"></script>
+    <script type="module" src="/scripts/customer/home.js"></script>
+    <script type="module" src="/scripts/events.js"></script>
+    <script type="module" src="/scripts/surveys.js"></script>
+  </body>
+</html>

@@ -1,0 +1,118 @@
+#nowPlayingContainer {
+  margin: 20px 0;
+}
+
+.now-playing-movie-banner {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.poster-container {
+  position: relative;
+}
+
+.movie-poster {
+  width: 140px;
+  height: auto;
+  border-radius: 10px;
+  margin-right: 20px;
+}
+
+.movie-info {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.movie-title {
+  margin: 0 0 10px;
+}
+
+.movie-tagline {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.movie-rating,
+.movie-genres,
+.movie-scores {
+  margin: 5px 0;
+}
+
+.movie-overview {
+  margin-right: 20px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.movie-overview:hover {
+  white-space: normal;
+  overflow: visible;
+}
+
+.movie-trailer-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibiltiy 0.3s;
+}
+
+.poster-container:hover .movie-trailer-container {
+  opacity: 1;
+  visibility: visible;
+}
+
+.movie-trailer {
+  width: 100%;
+  height: auto;
+  border: none;
+}
+
+.showtimes {
+  margin-top: 10px;
+}
+
+.showtimes p {
+  margin: 2px 0;
+}
+
+#ticketFormContainer {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+#ticketFormContainer form {
+  display: flex;
+  flex-direction: column;
+}
+
+#ticketFormContainer form label,
+#ticketFormContainer form input,
+#ticketFormContainer form button {
+  margin-bottom: 10px;
+}

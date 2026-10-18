@@ -1,0 +1,118 @@
+.eventsItemsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.events-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto auto auto auto auto auto auto auto auto auto;
+  padding: 1em;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  background-color: #fff;
+  overflow: hidden;
+  max-width: 350px;
+}
+
+.events-card ._id {
+  grid-row: 1;
+}
+
+.events-card .title {
+  grid-row: 2;
+}
+
+.events-card .startDate {
+  grid-column: 1 / 3;
+  grid-row: 3;
+}
+
+.events-card .endDate {
+  grid-column: 3 / 5;
+  grid-row: 3;
+}
+
+.events-card .startTime {
+  grid-column: 1 / 3;
+  grid-row: 4;
+}
+
+.events-card .endTime {
+  grid-column: 3 / 5;
+  grid-row: 4;
+}
+
+.events-card .type {
+  grid-column: 3 / 5;
+  grid-row: 5;
+}
+
+.events-card .status {
+  grid-column: 1 / 3;
+  grid-row: 5;
+}
+
+.events-card ._id,
+.events-card .title,
+.events-card .tagline {
+  grid-column: 1 / -1;
+  font-weight: bold;
+}
+.events-card img {
+  grid-column: 1 / -1;
+  grid-row: 6;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.events-card .tagline {
+  grid-row: 7;
+}
+
+.events-card .description {
+  grid-column: 1 / -1;
+  grid-row: 8;
+  line-height: 1.5;
+  font-size: 14px;
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.events-card .description:hover {
+  white-space: normal;
+  overflow: visible;
+}
+
+.events-card .link {
+  grid-column: 1 / -1;
+  grid-row: 9;
+}
+
+.events-card .postStartDate {
+  grid-column: 1 / 5;
+}
+
+.events-card .postEndDate {
+  grid-column: 1 / 5;
+}
+
+.events-card p {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  text-align: left;
+  width: 100%;
+}

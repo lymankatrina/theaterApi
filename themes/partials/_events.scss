@@ -1,0 +1,93 @@
+.current-public-event-banner {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.event-content {
+  display: flex;
+  margin: 1em;
+}
+
+.event-image-container {
+  flex: 0 0 30%;
+  max-width: 30%;
+  place-content: center;
+  rotate: -30deg;
+}
+
+.event-image {
+  max-width: 90%;
+  height: auto;
+  border-radius: 4px;
+  place-self: center;
+}
+
+
+.event-details {
+  background-color: $white;
+  border: $licorice;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: $licorice;
+}
+
+.event-header {
+  border-bottom: 2px solid $color1d;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.event-title {
+  font-size: 1.5em;
+  color: $color1d;
+  margin: 0;
+}
+
+.event-tagline {
+  font-size: 1.2em;
+  color: $color3d;
+  margin: 5px 0 0 0;
+}
+
+.event-body {
+  margin-bottom: 20px;
+}
+
+.event-description {
+  font-size: 1em;
+  margin: 0 0 10px 0;
+}
+
+.event-dates, .event-time {
+  font-size: 0.9em;
+  margin: 0 0 5px 0;
+}
+
+.event-dates strong, .event-time strong {
+  color: $color2d;
+}
+
+.event-footer {
+  border-top: 2px solid $color4d;
+  padding-top: 10px;
+  text-align: right;
+}
+
+.event-read-more a {
+text-decoration: none;
+  color: $color1d;
+  font-weight: bold;}
+
+.event-read-more a:hover {
+  color: $color2d;
+}
+
+.event-details:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}

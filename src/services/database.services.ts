@@ -12,6 +12,7 @@ import { applySchemaValidation as applyConcessionSchemaValidation } from '../sch
 import { applySchemaValidation as applyPricesSchemaValidation } from '../schemas/prices.schema';
 import { applySchemaValidation as applyCartSchemaValidation } from '../schemas/carts.schema';
 import { applySchemaValidation as applyOrderSchemaValidation } from '../schemas/orders.schema';
+import { applySchemaValidation as applyEventSchemaValidation } from '../schemas/events.schema';
 
 import type { User } from '../models/users.model';
 import type { Movie } from '../models/movies.model';
@@ -22,6 +23,7 @@ import type { Concession } from '../models/concessions.model';
 import type { Price } from '../models/prices.model';
 import type { Cart } from '../models/carts.model';
 import type { Order } from '../models/orders.model';
+import type { Event } from '../models/events.model';
 
 export let mongoClient: mongoDB.MongoClient;
 export let database: mongoDB.Db;
@@ -36,6 +38,7 @@ export const collections = {} as {
   prices: mongoDB.Collection<Price>;
   carts: mongoDB.Collection<Cart>;
   orders: mongoDB.Collection<Order>;
+  events: mongoDB.Collection<Event>;
 };
 
 export const connectToDatabase = async (): Promise<void> => {
@@ -54,6 +57,7 @@ export const connectToDatabase = async (): Promise<void> => {
   await applyPricesSchemaValidation(database);
   await applyCartSchemaValidation(database);
   await applyOrderSchemaValidation(database);
+  await applyEventSchemaValidation(database);
 
   collections.users = database.collection<User>(COLLECTION_NAMES.users);
   collections.movies = database.collection<Movie>(COLLECTION_NAMES.movies);
@@ -64,6 +68,7 @@ export const connectToDatabase = async (): Promise<void> => {
   collections.prices = database.collection<Price>(COLLECTION_NAMES.prices);
   collections.carts = database.collection<Cart>(COLLECTION_NAMES.carts);
   collections.orders = database.collection<Order>(COLLECTION_NAMES.orders);
+  collections.events = database.collection<Event>(COLLECTION_NAMES.events);
 
   await collections.seats.createIndex(
     {

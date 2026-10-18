@@ -1,0 +1,17 @@
+@media only screen and (min-width: 37.5em) {
+  nav {
+    display: flex;
+    flex-direction: row;
+  }
+  .colors,
+  .logos,
+  .iconSectionHome,
+  .fontFamiliesDiv,
+  .personasContainer,
+  .colorSchemesLayout {
+    grid-template-columns: 1fr 1fr;
+  }
+  .accentColors {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}

@@ -1,0 +1,45 @@
+/* SCSS HEX */
+$licorice: #0b0205ff;
+$white: #ffffffff;
+$color1: #f40b22ff;
+$color2: #00f100ff;
+$color3: #2ab7caff;
+$color4: #908b8dff;
+$color1d: #d60a1fff;
+$color2d: #009900ff;
+$color3d: #239aa9ff;
+$color4d: #7d787aff;
+$color1l: #f63c4fff;
+$color2l: #1fff1fff;
+$color3l: #45c8d9ff;
+$color4l: #afacadff;
+
+@mixin colorCombo1 {
+  background-color: $licorice;
+  color: $white;
+}
+
+@mixin colorCombo2 {
+  background-color: $white;
+  color: $licorice;
+}
+
+@mixin colorCombo3 {
+  background-color: $color1;
+  color: $licorice;
+}
+
+@mixin colorCombo4 {
+  background-color: $color2;
+  color: $licorice;
+}
+
+@mixin colorCombo5 {
+  background-color: $color3;
+  color: $licorice;
+}
+
+@mixin colorCombo6 {
+  background-color: $color4;
+  color: $licorice;
+}

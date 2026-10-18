@@ -1,0 +1,112 @@
+.news {
+  @include colorCombo2;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+}
+
+.publicNewsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.public-news-item-banner {
+  background-color: $color4l;
+  border: 1px solid $color4d;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.public-news-item-banner:hover {
+  transform: translateY(-5px);
+}
+
+.news-content {
+  display: flex;
+  margin: 1em;
+}
+
+.news-image-container {
+  flex: 0 0 30%;
+  max-width: 30%;
+  overflow: hidden;
+  place-content: center;
+}
+
+.news-image {
+  max-width: 90%;
+  height: auto;
+  border-radius: 4px;
+  place-self: center;
+}
+
+.news-details {
+  flex: 1;
+  background-color: $white;
+  border: $licorice;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px auto;
+  padding: 15px;
+  color: $licorice;
+}
+
+.news-header {
+  border-bottom: 2px solid $color1d;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.news-title {
+  color: $color1d;
+  margin: 0;
+}
+
+.news-tagline {
+  color: $color3d;
+  margin: 5px 0 0 0;
+}
+
+.news-body {
+  margin-bottom: 15px;
+}
+
+.news-description {
+  margin: 0 0 10px 0;
+}
+
+.news-date {
+  margin: 0 0 5px 0;
+}
+
+.news-date strong {
+  color: $color2d;
+}
+
+.news-footer {
+  border-top: 2px solid $color4d;
+  padding-top: 10px;
+  text-align: right;
+}
+
+.news-read-more a {
+text-decoration: none;
+  color: $color1d;
+  font-weight: bold;}
+
+.news-read-more a:hover {
+  color: $color2d;
+}
+
+.news-details:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+#publicNewsMessage, #adminNewsMessage {
+  margin-top: 20px;
+  color: $color4;
+  text-align: center;
+}

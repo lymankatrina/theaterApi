@@ -1,0 +1,17 @@
+footer {
+  @include colorCombo1;
+  text-align: center;
+  padding: 1em;
+  border-radius: 0.25em;
+  @include obliqua;
+}
+.footerLink {
+  color: $white;
+  text-align: center;
+  height: 2em;
+  width: 100%;
+  padding-top: 0.5em;
+}
+.footerLink:hover {
+  @include colorCombo2;
+}

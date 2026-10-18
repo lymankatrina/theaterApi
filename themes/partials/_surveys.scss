@@ -1,0 +1,23 @@
+.active-survey-banner {
+  margin: 20px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.survey-content {
+  margin: 10px 0;
+}
+
+.survey-iframe {
+  width: 100%;
+  max-height: 400px;
+  border: 0px;
+  margin: 0px;
+}
+
+.error-message {
+  font-weight: bold;
+  margin-top: 20px;
+}

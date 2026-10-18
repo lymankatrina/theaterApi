@@ -1,0 +1,18 @@
+@media only screen and (min-width: 37.5em) {
+  .header-logo {
+    grid-column: 1 / 4;
+    grid-row: 1;
+  }
+  .nav {
+    grid-column: 4 / 5;
+    grid-row: 1;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  }
+  .nowPlayingContainer {
+    padding: 20px;
+  }
+  .movie-poster {
+    width: 200px;
+  }
+}

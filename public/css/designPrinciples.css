@@ -1,0 +1,399 @@
+/* fonts */
+.backupFont {
+  font-family: sans-serif;
+}
+/* font family one */
+.urbaneBold {
+  font-family: 'urbane', sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.urbaneBoldItalic {
+  font-family: 'urbane', sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.urbaneLight {
+  font-family: 'urbane', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.urbaneLightItalic {
+  font-family: 'urbane', sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.urbaneRoundedMedium {
+  font-family: 'urbane-rounded', sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+.urbaneRoundedLight {
+  font-family: 'urbane-rounded', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+.urbaneRoundedLightLarge {
+  font-family: 'urbane-rounded', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 3em;
+}
+/* font family two */
+.obliqua {
+  font-family: 'obliqua', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.obliquaItalic {
+  font-family: 'obliqua', sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+.obliquaBold {
+  font-family: 'obliqua', sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+.obliquaBoldItalic {
+  font-family: 'obliqua', sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.caption {
+  font-size: x-small;
+}
+.overlay {
+  font-size: small;
+}
+.button {
+  border: none;
+  border-radius: 1em;
+  padding: 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1em;
+}
+.warningLabel {
+  padding: 8px;
+  color: #ffffff;
+  background-color: #d60a1f;
+}
+
+/* typography layout */
+
+.fontFamiliesDiv {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.fontFamilies {
+  grid-column: auto;
+  border-style: solid;
+  border-width: thin;
+  border-radius: 1em;
+  padding: 1em;
+  margin: 1em;
+}
+.typeCategoriesList {
+  border-style: solid;
+  border-width: thin;
+  border-radius: 1em;
+  padding: 1em;
+  margin: 1em;
+}
+.tagLine {
+  font-size: 2em;
+  font-weight: bold;
+}
+.emphasisTechniques {
+  border-style: solid;
+  border-width: thin;
+  border-radius: 1em;
+  padding: 1em;
+  margin: 1em;
+}
+
+.largeFont {
+  font-size: 2em;
+}
+/* header */
+header,
+footer {
+  background-color: #0b0205ff;
+  color: #ffffffff;
+  text-align: center;
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 0.25rem;
+}
+header h2 {
+  background-color: #0b0205ff;
+  color: #ffffffff;
+}
+
+/* navigation */
+nav {
+  background-color: #908b8d;
+  display: flex;
+  flex-direction: column;
+  font-size: 18px;
+}
+nav a {
+  color: #0b0205;
+  text-align: center;
+  height: 2rem;
+  width: 100%;
+  padding-top: 0.5rem;
+}
+nav a:link {
+  text-decoration: none;
+}
+/* nav and footer links */
+.footerLink {
+  color: #ffffffff;
+  text-align: center;
+  height: 2rem;
+  width: 100%;
+  padding-top: 0.5rem;
+}
+.footerLink:hover {
+  color: #0b0205ff;
+  background-color: #ffffffff;
+}
+.active {
+  color: #0b0205;
+  background: #7d787a;
+}
+
+p {
+  font-size: 1em;
+  line-height: 2em;
+}
+ul {
+  font-size: 1rem;
+  padding: 1rem;
+  margin-left: 2rem;
+  line-height: 1.5rem;
+}
+/* Colors */
+.colorSchemesLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.colorCombosLayout {
+  grid-column: auto;
+  border-radius: 1em;
+  margin: 1em;
+  padding: 1em;
+}
+.colorCombo1 {
+  background-color: #0b0205;
+  color: #ffffff;
+}
+.colorCombo2 {
+  background-color: #ffffff;
+  color: #0b0205;
+  box-shadow: 0 4px 8px 0 rgba(144, 139, 141, 1);
+}
+.colorCombo3 {
+  background-color: #00f100;
+  color: #0b0205;
+}
+.colorCombo4 {
+  background-color: #f40b22;
+  color: #0b0205;
+}
+.colorCombo5 {
+  background-color: #2ab7ca;
+  color: #0b0205;
+}
+.colorCombo6 {
+  background-color: #908b8d;
+  color: #0b0205;
+}
+.colorCombo3-d {
+  background-color: #00cc00;
+  color: #0b0205;
+}
+.colorCombo4-d {
+  background-color: #d60a1f;
+  color: #ffffff;
+}
+.colorCombo5-d {
+  background-color: #239aa9;
+  color: #0b0205;
+}
+.colorCombo6-d {
+  background-color: #7d787a;
+  color: #0b0205;
+}
+.colorCombo3-l {
+  background-color: #1fff1f;
+  color: #0b0205;
+}
+.colorCombo4-l {
+  background-color: #f63c4f;
+  color: #0b0205;
+}
+.colorCombo5-l {
+  background-color: #45c8d9;
+  color: #0b0205;
+}
+.colorCombo6-l {
+  background-color: #afacad;
+  color: #0b0205;
+}
+.shadesLayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto;
+}
+.shades {
+  font-size: large;
+  font-weight: bold;
+  margin: 0.5em;
+  border-radius: 0.5em;
+  padding: 1em;
+}
+.accentColors {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.colorsOnGray {
+  grid-column: auto;
+  background-color: #7d787a;
+  border-radius: 1em;
+  margin: 1em;
+}
+.colorsOnBlack {
+  grid-column: auto;
+  background-color: #0b0205;
+  border-radius: 1em;
+  margin: 1em;
+}
+.colorsOnWhite {
+  grid.column: auto;
+  background-color: #ffffff;
+  border-radius: 1em;
+  box-shadow: 0 4px 8px 0 rgba(144, 139, 141, 1);
+  margin: 1em;
+}
+.color1 {
+  color: #f40b22;
+}
+.color2 {
+  color: #00f100;
+}
+.color3 {
+  color: #2ab7ca;
+}
+.color1-dark {
+  color: #d60a1f;
+}
+.color2-dark {
+  color: #00cc00;
+}
+.color3-dark {
+  color: #239aa9;
+}
+.color1-light {
+  color: #f63c4f;
+}
+.color2-light {
+  color: #1fff1f;
+}
+.color3-light {
+  color: #45c8d9;
+}
+.color4 {
+  color: white;
+  font-size: 1.5em;
+}
+.color5 {
+  color: #908b8d;
+  font-size: 1.5em;
+}
+.color6 {
+  color: #0b0205;
+  font-size: 1.5em;
+}
+.logos {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+.logo {
+  padding: 1em;
+  grid-column: auto;
+}
+
+.iconsContainerTypography {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  align-items: center;
+  border-style: solid;
+  border-width: thin;
+  border-radius: 1em;
+  padding: 1em;
+  margin: 1em;
+}
+.icon {
+  padding: 1em;
+  grid-column: auto;
+  font-size: 2em;
+}
+.iconSectionHome {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: auto;
+}
+.icons {
+  padding: 1em;
+}
+.homeDiv1,
+.homeDiv2,
+.homeDiv3,
+.targetAudience,
+.scenarios,
+.colorSchemeDiv1,
+.typographyDiv1,
+.typographyDiv2,
+.typographyDiv3,
+.typographyDiv4 {
+  margin: 2em;
+}
+.personasContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin: 1em;
+}
+.personas {
+  grid-column: auto;
+  border-style: solid;
+  border-width: thin;
+  border-radius: 1em;
+  padding: 1em;
+  margin: 1em;
+}
+.underlines {
+  text-decoration: underline;
+}
+.designLink,
+.documentationLink {
+  color: #0b0205;
+}
+.headings {
+  margin: 2em;
+}
