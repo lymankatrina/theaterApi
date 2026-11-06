@@ -7,7 +7,7 @@ import { generateTicketsForShowtime } from '../services/tickets.services';
 import type { CreateShowtimeInput } from '../dto/showtimes.dto';
 import type { Showtime } from '../models/showtimes.model';
 
-import { getDatesBetween } from '../helpers/helpers';
+import { getDatesBetween, getTodayDateString } from '../helpers/helpers';
 
 export class ShowtimesController {
   getShowtimes = async (req: Request, res: Response): Promise<void> => {
@@ -61,7 +61,7 @@ export class ShowtimesController {
 
   getShowtimesNowPlaying = async (req: Request, res: Response): Promise<void> => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getTodayDateString();
       const nowPlaying = await collections.showtimes
         .aggregate([
           {
@@ -114,7 +114,7 @@ export class ShowtimesController {
 
   getShowtimesComingSoon = async (req: Request, res: Response): Promise<void> => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getTodayDateString();
       const comingSoon = await collections.showtimes
         .aggregate([
           {

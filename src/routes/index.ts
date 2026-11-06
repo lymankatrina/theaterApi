@@ -11,6 +11,7 @@ import { priceRouter } from './prices.route';
 import { cartRouter } from './carts.route';
 import { orderRouter } from './orders.route';
 import { paymentRouter } from './payments.route';
+import { eventRouter } from './events.route';
 import { swaggerRouter } from './swagger.route';
 
 const routes = Router();
@@ -25,6 +26,7 @@ routes.use('/prices', priceRouter);
 routes.use('/carts', cartRouter);
 routes.use('/orders', orderRouter);
 routes.use('/payments', paymentRouter);
+routes.use('/events', eventRouter);
 routes.use('/', swaggerRouter);
 
 export default routes;

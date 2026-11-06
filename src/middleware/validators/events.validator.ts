@@ -1,4 +1,4 @@
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 
 import { EVENT_TYPES, CONTENT_STATUSES } from '../../types/events.types';
 
@@ -54,7 +54,7 @@ const eventFieldValidationRules = (isUpdate = false) => {
         protocols: ['http', 'https']
       })
       .withMessage('Image must be a valid HTTP or HTTPS URL to a publicly shared image'),
-    body('link')
+    field('link')
       .optional()
       .isString()
       .trim()
@@ -100,4 +100,30 @@ export const eventValidationRules = () => {
 
 export const updateEventValidationRules = () => {
   return eventFieldValidationRules(true);
+};
+
+export const eventQueryValidationRules = () => {
+  return [
+    query('search')
+      .optional()
+      .isString()
+      .withMessage('Search must be a string')
+      .trim()
+      .isLength({ min: 1, max: 100 })
+      .withMessage('Search must be between 1 and 100 characters'),
+    query('type')
+      .optional()
+      .isString()
+      .withMessage('Type must be a string')
+      .trim()
+      .isIn([...EVENT_TYPES])
+      .withMessage('Type must be a valid event type'),
+    query('status')
+      .optional()
+      .isString()
+      .withMessage('Status must be a string')
+      .trim()
+      .isIn([...CONTENT_STATUSES])
+      .withMessage('Status must be a valid content status')
+  ];
 };

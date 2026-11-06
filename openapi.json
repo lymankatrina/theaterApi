@@ -2006,6 +2006,306 @@
           }
         }
       }
+    },
+    "/events": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Get current events",
+        "description": "Returns public events whose posting period includes the current date, sorted by event start date.",
+        "responses": {
+          "200": {
+            "description": "Current Events retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error getting current events"
+          }
+        }
+      }
+    },
+    "/events/admin": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Get all events",
+        "description": "Returns all events sorted by start date. Events may be filtered by event type or status and searched by title, tagline, or description. Administrative access is required.",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "Filters events by type.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "premiere",
+                "club",
+                "private",
+                "special"
+              ]
+            },
+            "example": "premiere"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Filters events by status.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "public",
+                "private"
+              ]
+            },
+            "example": "public"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "description": "Filters events by title, tagline, or description",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "example": "halloween"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Events retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "422": {
+            "description": "Invalid query parameter"
+          },
+          "500": {
+            "description": "Error getting events"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Create a new event",
+        "description": "Creates a new event. Administrative access is required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEventInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a new event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully created a new event"
+                    },
+                    "eventId": {
+                      "type": "string",
+                      "format": "objectId",
+                      "example": "68d07c4a1234567890abcdef"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "422": {
+            "description": "Invalid event data"
+          },
+          "500": {
+            "description": "Unable to create event"
+          }
+        }
+      }
+    },
+    "/events/admin/{eventId}": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Get event by ID",
+        "description": "Returns an event by event ID. Administrative access required.",
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of an event",
+            "schema": {
+              "type": "string",
+              "format": "objectId",
+              "example": "6ab43f8cc9819c4743d6203c"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "404": {
+            "description": "Event not found"
+          },
+          "422": {
+            "description": "Event ID parameter is not valid"
+          },
+          "500": {
+            "description": "Error getting Event by ID"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Update an event",
+        "description": "Updates an existing event. Administrative access is required.",
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "description": "MongoDB ObjectId of the event to update",
+            "schema": {
+              "type": "string",
+              "format": "objectId",
+              "example": "66c8e0d1f0a123456789abcd"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEventInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Event updated successfully or is already up to date"
+          },
+          "400": {
+            "description": "Invalid request or no event update fields provided"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "404": {
+            "description": "Event not found"
+          },
+          "422": {
+            "description": "Event ID parameter not valid"
+          },
+          "500": {
+            "description": "Failed to update Event"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Delete an event",
+        "description": "Deletes an existing event. Administrative access is required.",
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "objectId",
+              "example": "66c8e0d1f0a123456789abcd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event deleted successfully"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          },
+          "403": {
+            "description": "Administrative access required"
+          },
+          "404": {
+            "description": "Event not found"
+          },
+          "422": {
+            "description": "Event ID parameter not valid"
+          },
+          "500": {
+            "description": "Failed to delete event"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3011,6 +3311,289 @@
           "paymentId": {
             "type": "string",
             "example": "KIGQDEXaaDuGT88Cov4NsT7bOJdZY"
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "required": [
+          "_id",
+          "title",
+          "tagline",
+          "description",
+          "startDate",
+          "endDate",
+          "startTime",
+          "endTime",
+          "image",
+          "type",
+          "postStartDate",
+          "postEndDate",
+          "status"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "format": "objectId",
+            "example": "6ab43f8cc9819c4743d000ed"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 85,
+            "example": "Premier of Coyote vs. Acme"
+          },
+          "tagline": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 85,
+            "example": "The movie Acme doesn't want you to see."
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 850,
+            "example": "A tenacious coyote takes on the ACME Corporation."
+          },
+          "startDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-11-15"
+          },
+          "endDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-11-15"
+          },
+          "startTime": {
+            "type": "string",
+            "pattern": "^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$",
+            "example": "9:00 PM"
+          },
+          "endTime": {
+            "type": "string",
+            "pattern": "^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$",
+            "example": "11:00 PM"
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/image.jpg"
+          },
+          "link": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/event"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "premiere",
+              "club",
+              "private",
+              "special"
+            ],
+            "example": "premiere"
+          },
+          "postStartDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Date the event should begin appearing on the public website",
+            "example": "2026-11-05"
+          },
+          "postEndDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Date the event should stop appearing on the public website",
+            "example": "2026-11-15"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "public",
+              "private"
+            ],
+            "example": "public"
+          }
+        }
+      },
+      "CreateEventInput": {
+        "type": "object",
+        "required": [
+          "title",
+          "tagline",
+          "description",
+          "startDate",
+          "endDate",
+          "startTime",
+          "endTime",
+          "image",
+          "type",
+          "postStartDate",
+          "postEndDate",
+          "status"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 85,
+            "example": "Wildwood Premiere Night"
+          },
+          "tagline": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 85,
+            "example": "Join us for a special premiere event!"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 850,
+            "example": "Celebrate the premiere of Wildwood with a special evening at the San Juan Theatre. Doors open early for guests, with the movie beginning at 9:00 PM."
+          },
+          "startDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-11-15"
+          },
+          "endDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-11-15"
+          },
+          "startTime": {
+            "type": "string",
+            "pattern": "^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$",
+            "example": "9:00 PM"
+          },
+          "endTime": {
+            "type": "string",
+            "pattern": "^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$",
+            "example": "11:00 PM"
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/image.jpg"
+          },
+          "link": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/event"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "premiere",
+              "club",
+              "private",
+              "special"
+            ],
+            "example": "premiere"
+          },
+          "postStartDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Date the event should begin appearing on the public website",
+            "example": "2026-11-05"
+          },
+          "postEndDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Date the event should stop appearing on the public website",
+            "example": "2026-11-15"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "public",
+              "private"
+            ],
+            "example": "public"
+          }
+        }
+      },
+      "UpdateEventInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 85,
+            "example": "Premier of Coyote vs. Acme"
+          },
+          "tagline": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 85,
+            "example": "The movie Acme doesn't want you to see."
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 850,
+            "example": "A tenacious coyote takes on the ACME Corporation."
+          },
+          "startDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-11-15"
+          },
+          "endDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-11-15"
+          },
+          "startTime": {
+            "type": "string",
+            "pattern": "^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$",
+            "example": "9:00 PM"
+          },
+          "endTime": {
+            "type": "string",
+            "pattern": "^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$",
+            "example": "11:00 PM"
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/image.jpg"
+          },
+          "link": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/event"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "premiere",
+              "club",
+              "private",
+              "special"
+            ],
+            "example": "premiere"
+          },
+          "postStartDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Date the event should begin appearing on the public website",
+            "example": "2026-11-05"
+          },
+          "postEndDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Date the event should stop appearing on the public website",
+            "example": "2026-11-15"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "public",
+              "private"
+            ],
+            "example": "public"
           }
         }
       }
