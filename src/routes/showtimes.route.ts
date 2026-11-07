@@ -19,7 +19,7 @@ showtimeRouter.get('/', movieIdQueryValidationRules(), validate, controller.getS
 showtimeRouter.get('/now-playing', controller.getShowtimesNowPlaying);
 showtimeRouter.get('/coming-soon', controller.getShowtimesComingSoon);
 showtimeRouter.get('/:showtimeId', showtimeIdParamValidationRules(), validate, controller.getShowtimeById);
-showtimeRouter.post('/', requiresAuth(), validAdmin, showtimeValidationRules(), validate, controller.createShowtimes);
-showtimeRouter.delete('/:showtimeId', requiresAuth(), validAdmin, showtimeIdParamValidationRules(), validate, controller.deleteShowtime);
+showtimeRouter.post('/admin', requiresAuth(), validAdmin, showtimeValidationRules(), validate, controller.createShowtimes);
+showtimeRouter.delete('/admin/:showtimeId', requiresAuth(), validAdmin, showtimeIdParamValidationRules(), validate, controller.deleteShowtime);
 
 export default showtimeRouter;

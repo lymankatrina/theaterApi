@@ -23,10 +23,10 @@ concessionRouter.get('/admin', requiresAuth(), validAdmin, concessionsQueryValid
 
 concessionRouter.get('/:concessionId', concessionsParamValidationRules(), validate, controller.getConcessionById);
 
-concessionRouter.post('/', requiresAuth(), validAdmin, concessionValidationRules(), validate, controller.createConcession);
+concessionRouter.post('/admin', requiresAuth(), validAdmin, concessionValidationRules(), validate, controller.createConcession);
 
 concessionRouter.put(
-  '/:concessionId',
+  '/admin/:concessionId',
   requiresAuth(),
   validAdmin,
   concessionsParamValidationRules(),

@@ -18,11 +18,11 @@ export const userRouter = Router();
 
 const controller = new UsersController();
 
-userRouter.get('/', requiresAuth(), userEmailQueryValidationRules(), validate, validAdmin, controller.getUsers);
+userRouter.get('/admin', requiresAuth(), validAdmin, userEmailQueryValidationRules(), validate, controller.getUsers);
 
 userRouter.get('/me', requiresAuth(), checkUserExists, validUser, controller.getCurrentUser);
 
-userRouter.get('/:userId', requiresAuth(), validAdmin, userIdParamValidationRules(), validate, controller.getUserById);
+userRouter.get('/admin/:userId', requiresAuth(), validAdmin, userIdParamValidationRules(), validate, controller.getUserById);
 
 userRouter.put(
   '/:userId',
@@ -35,7 +35,7 @@ userRouter.put(
 );
 
 userRouter.patch(
-  '/:userId/role',
+  '/admin/:userId/role',
   requiresAuth(),
   validAdmin,
   userIdParamValidationRules(),
@@ -44,6 +44,6 @@ userRouter.patch(
   controller.updateUserRole
 );
 
-userRouter.delete('/:userId', requiresAuth(), validAdmin, userIdParamValidationRules(), validate, controller.deleteUserById);
+userRouter.delete('/admin/:userId', requiresAuth(), validAdmin, userIdParamValidationRules(), validate, controller.deleteUserById);
 
 export default userRouter;

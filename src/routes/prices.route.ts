@@ -11,9 +11,9 @@ const controller = new PricesController();
 
 priceRouter.get('/', controller.getPrices);
 priceRouter.get('/:priceId', priceIdParamValidationRules(), validate, controller.getPriceById);
-priceRouter.post('/', requiresAuth(), validAdmin, priceValidationRules(), validate, controller.createPrice);
+priceRouter.post('/admin', requiresAuth(), validAdmin, priceValidationRules(), validate, controller.createPrice);
 priceRouter.put(
-  '/:priceId',
+  '/admin/:priceId',
   requiresAuth(),
   validAdmin,
   priceIdParamValidationRules(),
