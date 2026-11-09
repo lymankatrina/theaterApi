@@ -20,7 +20,7 @@ const controller = new UsersController();
 
 userRouter.get('/admin', requiresAuth(), validAdmin, userEmailQueryValidationRules(), validate, controller.getUsers);
 
-userRouter.get('/me', requiresAuth(), checkUserExists, validUser, controller.getCurrentUser);
+userRouter.get('/me', checkUserExists, validUser, controller.getCurrentUser);
 
 userRouter.get('/admin/:userId', requiresAuth(), validAdmin, userIdParamValidationRules(), validate, controller.getUserById);
 

@@ -1,18 +1,38 @@
 @media only screen and (min-width: 37.5em) {
-  .header-logo {
-    grid-column: 1 / 4;
-    grid-row: 1;
+  .header {
+    grid-template-columns: 3fr 2fr;
   }
-  .nav {
-    grid-column: 4 / 5;
+
+  .header-logo {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    max-width: none;
+  }
+
+  .user-nav {
+    grid-column: 2;
     grid-row: 1;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: auto 1fr;
   }
+
+  .user-greeting {
+    border-right: none;
+    border-bottom: 1px solid $color4d;
+  }
+
+  .user-nav .nav {
+    grid-template-columns: 1fr;
+  }
+
   .nowPlayingContainer {
     padding: 20px;
   }
-  .movie-poster {
-    width: 200px;
+
+  .poster-container {
+    flex: 0 0 200px;
+    max-width: 200px;
+    margin-right: 20px;
   }
 }

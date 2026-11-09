@@ -1,0 +1,48 @@
+@media only screen and (min-width: 30em) {
+  .header {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+
+  .header-logo {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .user-nav {
+    grid-column: 2;
+    grid-row: 1;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    border-top: none;
+    border-left: 1px solid $color4d;
+  }
+
+  .user-greeting {
+    border-right: none;
+    border-bottom: 1px solid $color4d;
+  }
+
+  .user-nav .nav {
+    width: 100%;
+  }
+
+  .now-playing-movie-banner {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .poster-container {
+    flex: 0 0 calc(50% - 10px);
+    width: auto;
+    max-width: calc(10% - 10px);
+    margin-right: 10px;
+    margin-bottom: 0;
+  }
+
+  .movie-info {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+  }
+}

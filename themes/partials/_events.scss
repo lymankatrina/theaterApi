@@ -1,3 +1,30 @@
+.events {
+  margin: 20px 0;
+}
+
+.events-marquee {
+  background-color: $licorice;
+  border: 6px solid $color1d;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow:
+    0 4px 10px rgb(0, 0, 0, 0.35),
+    inset 0 0 0 3px $color4;
+}
+
+.events-marquee-inner {
+  background-color: $white;
+  border: 3px solid $color4;
+  padding: 2%;
+}
+
+#currentPublicEventsMessage {
+  @include urbaneBold;
+  text-align: center;
+  font-size: 1.4em;
+  padding: 1.5em;
+}
+
 .current-public-event-banner {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -24,7 +51,6 @@
   border-radius: 4px;
   place-self: center;
 }
-
 
 .event-details {
   background-color: $white;
@@ -64,12 +90,14 @@
   margin: 0 0 10px 0;
 }
 
-.event-dates, .event-time {
+.event-dates,
+.event-time {
   font-size: 0.9em;
   margin: 0 0 5px 0;
 }
 
-.event-dates strong, .event-time strong {
+.event-dates strong,
+.event-time strong {
   color: $color2d;
 }
 
@@ -80,9 +108,10 @@
 }
 
 .event-read-more a {
-text-decoration: none;
+  text-decoration: none;
   color: $color1d;
-  font-weight: bold;}
+  font-weight: bold;
+}
 
 .event-read-more a:hover {
   color: $color2d;
