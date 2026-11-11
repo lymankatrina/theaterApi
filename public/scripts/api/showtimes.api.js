@@ -17,3 +17,11 @@ export const getComingSoon = async () => {
 
   return response.json();
 };
+
+export const getShowtimesByMovieId = async (movieId) => {
+  const response = await fetch(`/showtimes?movieId=${encodeURIComponent(movieId)}`);
+  if (!response.ok) {
+    throw new Error('Unable to get showtimes');
+  }
+  return response.json();
+};

@@ -6,7 +6,7 @@ export const getMovies = async () => {
   return response.json();
 };
 
-export const getMovieById = async () => {
+export const getMovieById = async (movieId) => {
   const response = await fetch(`/movies/${movieId}`);
   if (!response.ok) {
     throw new Error('Unable to get movie');

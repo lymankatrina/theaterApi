@@ -1,4 +1,4 @@
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 
 import { SHOWTIME_TYPES } from '../../types/showtimes.types';
 import { validDateString } from '../../helpers/validationHelpers';
@@ -6,6 +6,10 @@ import { validDateString } from '../../helpers/validationHelpers';
 const showtimeIdParamValidationRules = () => {
   return [param('showtimeId').isMongoId().withMessage('Showtime ID must be a valid ObjectId')];
 };
+
+const showtimeIdQueryValidationRules = () => [
+  query('showtimeId').notEmpty().withMessage('Showtime ID is required').isMongoId().withMessage('Showtime ID must be a valid MongoDB ObjectId')
+];
 
 const showtimeValidationRules = () => {
   return [
@@ -67,4 +71,4 @@ const updateShowtimeValidationRules = () => {
   ];
 };
 
-export { showtimeValidationRules, updateShowtimeValidationRules, showtimeIdParamValidationRules };
+export { showtimeValidationRules, showtimeIdQueryValidationRules, updateShowtimeValidationRules, showtimeIdParamValidationRules };

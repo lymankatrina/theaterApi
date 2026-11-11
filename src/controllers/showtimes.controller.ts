@@ -15,11 +15,13 @@ export class ShowtimesController {
       const { movieId } = matchedData(req, {
         locations: ['query']
       });
+      const today = getTodayDateString();
       const filter = movieId
         ? {
-            movieId: new ObjectId(movieId)
+            movieId: new ObjectId(movieId),
+            date: { $gte: today }
           }
-        : {};
+        : { date: { $gte: today } };
       const showtimes = await collections.showtimes
         .find(filter)
         .sort({

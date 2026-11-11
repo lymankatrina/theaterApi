@@ -830,6 +830,48 @@
         }
       }
     },
+    "/tickets": {
+      "get": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "Get tickets for a showtime",
+        "description": "Returns all tickets for the provided showtime.",
+        "parameters": [
+          {
+            "name": "showtimeId",
+            "in": "query",
+            "required": true,
+            "description": "MongoDB ObjectId of the showtime",
+            "schema": {
+              "type": "string",
+              "example": "6ab43f8cc0000c4743d6203d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tickets retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Ticket"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Error getting tickets"
+          }
+        }
+      }
+    },
     "/tickets/admin/{showtimeId}": {
       "post": {
         "tags": [
@@ -863,6 +905,9 @@
             "description": "Administrative access required"
           },
           "404": {
+            "description": "Showtime not found"
+          },
+          "409": {
             "description": "One or more tickets already exist for the showtime and seat"
           },
           "422": {

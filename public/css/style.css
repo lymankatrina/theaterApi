@@ -677,54 +677,41 @@ section.movies {
   border-radius: 5px;
 }
 
-.nowPlayingAvailableTicketsContainer {
-  display: flex;
-  flex-direction: column;
-  place-items: center;
-}
-
-.seats-row {
-  display: flex;
+#seatsContainer {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto auto auto;
   justify-content: center;
-  margin-bottom: 10px;
+  align-items: start;
+  column-gap: 45px;
 }
 
 .seat-section {
-  display: grid;
-  grid-auto-flow: row;
-  gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.seatsContainer {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  place-content: center;
-}
-
-.screen {
-  width: 100%;
-  margin-bottom: 10px;
-  grid-column: 1/4;
-  place-self: center;
+.seat-row {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
 }
 
 .left-section {
   grid-column: 1;
-  grid-template-rows: repeat(19, 30px);
-  grid-template-columns: repeat(3, 30px);
+  grid-row: 2;
 }
 
 .center-section {
   grid-column: 2;
-  grid-template-rows: repeat(15, 30px);
-  grid-template-columns: repeat(8, 30px);
-  margin: 0 20px;
+  grid-row: 2;
+  margin-top: 45px;
 }
 
 .right-section {
   grid-column: 3;
-  grid-template-rows: repeat(16, 30px);
-  grid-template-columns: repeat(3, 30px);
+  grid-row: 2;
 }
 
 .seat {
@@ -733,44 +720,67 @@ section.movies {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 5px;
   border-radius: 5px;
   color: white;
   font-weight: bold;
   cursor: pointer;
+  box-sizing: border-box;
+}
+
+.seat i {
+  transform: rotate(180deg);
+}
+
+.screen {
+  font-family: "urbane", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  grid-column: 1/4;
+  grid-row: 1;
+  margin-bottom: 45px;
+  width: 80%;
+  place-self: center;
+  padding: 8px;
+  text-align: center;
+  background-color: #afacad;
+  color: #0b0205;
+  border: 2px solid #7d787a;
+  border-radius: 50% 50% 5px 5px/20% 20% 5px 5px;
 }
 
 .available {
-  background-color: blue;
+  background-color: #2ab7ca;
+  color: white;
 }
 
 .sold {
-  background-color: red;
+  background-color: #d60a1f;
 }
 
 .wheelchair {
-  background-color: green;
+  background-color: #009900;
   border: 2px dashed white;
 }
 
 .reserved {
-  background-color: darkgoldenrod;
+  background-color: #7d787a;
 }
 
 .unavailable {
-  background-color: gray;
+  background-color: #7d787a;
 }
 
 .selected {
-  background-color: yellow;
-  border: 2px solid black;
+  background-color: #00f100;
 }
 
 .legend {
   grid-column: 1/4;
+  grid-row: 3;
   display: flex;
   justify-content: space-around;
   margin-top: 20px;
+  height: auto;
 }
 
 .legend-item {
@@ -778,34 +788,24 @@ section.movies {
   align-items: center;
 }
 
-.seatsLegendContainer {
+.legend-seat {
+  width: 32px;
+  height: 32px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  margin-top: 20px;
+  align-items: center;
+  border-radius: 5px;
+  margin: 5px;
+  color: white;
+  box-sizing: border-box;
+  font-family: "urbane-rounded", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-weight: bold;
 }
 
-.legend-color {
-  width: 20px;
-  height: 20px;
-  margin-right: 5px;
-}
-
-.legend-available {
-  background-color: blue;
-}
-
-.legend-wheelchair {
-  background-color: green;
-  border: 2px dashed white;
-}
-
-.legend-sold {
-  background-color: red;
-}
-
-.legend-reserved {
-  background-color: darkgoldenrod;
+.legend-seat i {
+  transform: rotate(180deg);
 }
 
 .shoppingCartContainer {

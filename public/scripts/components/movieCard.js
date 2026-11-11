@@ -85,7 +85,7 @@ export const createMovieCard = (movie) => {
   showtimesButton.classList.add('view-showtimes-button');
   showtimesButton.textContent = 'View Showtimes & Get Tickets';
   showtimesButton.addEventListener('click', () => {
-    window.location.href = `/pages/getShowtimes.html?movieId=${encodeURIComponent(movie._id)}`;
+    window.location.href = `/pages/showtimes.html?movieId=${encodeURIComponent(movie._id)}`;
   });
 
   movieInfo.appendChild(showtimesButton);

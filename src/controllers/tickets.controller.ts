@@ -6,6 +6,25 @@ import { collections } from '../services/database.services';
 import { generateTicketsForShowtime } from '../services/tickets.services';
 
 export class TicketsController {
+  getTickets = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { showtimeId } = matchedData(req, {
+        locations: ['query']
+      }) as { showtimeId: string };
+      const tickets = await collections.tickets
+        .find({
+          showtimeId: new ObjectId(showtimeId)
+        })
+        .toArray();
+      res.status(200).json(tickets);
+    } catch (error) {
+      console.error('Error getting tickets:', error);
+      res.status(500).json({
+        message: 'Error getting tickets'
+      });
+    }
+  };
+
   generateTicketsFromShowtime = async (req: Request, res: Response): Promise<void> => {
     const { showtimeId } = matchedData(req, {
       locations: ['params']
